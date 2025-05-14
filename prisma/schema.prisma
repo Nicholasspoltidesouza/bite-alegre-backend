@@ -138,3 +138,15 @@ model Review {
   user       User       @relation(fields: [user_id], references: [id])
   restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
 }
+
+model Publication {
+  id          String   @id @default(uuid())
+  user_id      String
+  description String
+  restaurant_id  String
+  url         String
+  createdAt   DateTime @default(now())
+
+  user       User       @relation(fields: [user_id], references: [id])
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
+}
