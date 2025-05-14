@@ -1,0 +1,140 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Weekday {
+  MON
+  TUE
+  WED
+  THU
+  FRI
+  SAT
+  SUN
+}
+
+model Restaurant {
+  id            String          @id @default(uuid())
+  profilePhoto  String?         @db.Text
+  bannerPhoto   String?         @db.Text
+  name          String          @db.VarChar(100)
+  cnpj          String          @db.VarChar(14)
+  address       String          @db.VarChar(255)
+  email         String          @unique @db.VarChar(100)
+  password      String          @db.VarChar(255)
+  average_price Decimal?        @db.Decimal(10, 2)
+  phone         String          @db.VarChar(20)
+  description   String?         @db.Text
+  tags          RestaurantTag[]
+  checkin       Checkin[]
+  latitude      Float?
+  longitude     Float?
+
+  review       Review[]
+  openingHours OpeningHour[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OpeningHour {
+  id       String   @id @default(uuid())
+  periodId String
+  weekday  Weekday
+  opensAt  DateTime @db.Time
+  closesAt DateTime @db.Time
+
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  restaurantId String
+
+  @@index([restaurantId, weekday])
+  @@index([restaurantId, periodId])
+}
+
+model User {
+  id              String             @id @default(uuid())
+  profilePhoto    String?            @db.Text
+  name            String             @db.VarChar(255)
+  nickname        String             @unique @db.VarChar(100)
+  email           String             @unique @db.VarChar(255)
+  password        String             @db.VarChar(255)
+  phone           String?            @db.VarChar(20)
+  influencer       Boolean?          @default(false)
+  gender          Gender
+  birthDate       DateTime
+  createdAt       DateTime           @default(now())
+  userPreferences User_Preferences[]
+  checkin         Checkin[]
+  review          Review[]
+}
+
+enum Gender {
+  MASCULINO
+  FEMININO
+  NAO_QUERO_INFORMAR
+  OUTRO
+}
+
+model Tag {
+  id              String             @id @default(uuid())
+  name            String             @db.VarChar(100)
+  type            TagType
+  restaurants     RestaurantTag[]
+  userPreferences User_Preferences[]
+}
+
+model User_Preferences {
+  id      String @id @default(uuid())
+  user_id String
+  tag_id  String
+  weight  Int    @default(1)
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  tag     Tag    @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+}
+
+enum TagType {
+  LOCAL
+  CATEGORIA
+  OCASIAO
+}
+
+model RestaurantTag {
+  restaurantId String
+  tagId        String
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  tag        Tag        @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([restaurantId, tagId])
+}
+
+model Checkin {
+  id            String   @id @default(uuid())
+  user_id       String
+  restaurant_id String
+  time_at       DateTime @default(now())
+
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
+  User       User?       @relation(fields: [user_id], references: [id])
+}
+
+model Review {
+  id            String  @id @default(uuid())
+  user_id       String
+  restaurant_id String
+  feedback      String?
+  stars         Decimal
+
+  user       User       @relation(fields: [user_id], references: [id])
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
+}

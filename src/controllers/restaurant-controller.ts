@@ -1,0 +1,84 @@
+import { Request, Response } from 'express';
+
+import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
+import { RestaurantService } from '../services/restaurant-service.js';
+
+export class RestaurantController {
+  static async create(req: Request, res: Response) {
+    try {
+      const {
+        profilePhoto,
+        bannerPhoto,
+        name,
+        cnpj,
+        description,
+        address,
+        email,
+        password,
+        averagePrice,
+        phone,
+        tagIds,
+        openingPeriods,
+      } = req.body;
+
+      const restaurant = await RestaurantService.createRestaurant({
+        profilePhoto,
+        bannerPhoto,
+        name,
+        cnpj,
+        description,
+        address,
+        email,
+        password,
+        averagePrice,
+        phone,
+        tagIds,
+        openingPeriods,
+      });
+
+      res.status(201).json(restaurant);
+    } catch (error) {
+      console.error('Error creating restaurant:', error);
+      res.status(500).json({ error: 'Failed to create restaurant' });
+    }
+  }
+
+  static async list(req: Request, res: Response) {
+    const geo = req.query.geolocation?.toString().split(',').map(Number);
+
+    const filters: RestaurantFilterDto = {
+      name: req.query.name?.toString(),
+      geolocation: geo && geo.length === 2 ? [geo[0], geo[1]] : undefined,
+      proximity: req.query.proximity ? Number(req.query.proximity) : undefined,
+      price_range: req.query.price_range
+        ? Number(req.query.price_range)
+        : undefined,
+      tags: req.query.tags ? req.query.tags.toString().split(',') : undefined,
+      open_now: req.query.open_now === 'true',
+    };
+
+    try {
+      const restaurants = await RestaurantService.getRestaurants(filters);
+      res.status(200).json(restaurants);
+    } catch (error) {
+      console.error('Error fetching restaurants:', error);
+      res.status(500).json({ error: 'Failed to fetch restaurants' });
+    }
+  }
+
+  static async find(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const restaurant = await RestaurantService.getRestaurantById(id);
+
+      if (!restaurant) {
+        res.status(404).json({ error: 'Restaurant not found' });
+      }
+
+      res.status(200).json(restaurant);
+    } catch (error) {
+      console.error('Error finding one restaurant:', error);
+      res.status(500).json({ error: 'Failed to find restaurant' });
+    }
+  }
+}

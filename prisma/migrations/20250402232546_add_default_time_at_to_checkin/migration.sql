@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Checkin" ALTER COLUMN "time_at" SET DEFAULT CURRENT_TIMESTAMP;
