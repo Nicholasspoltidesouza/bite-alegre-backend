@@ -1,16 +1,19 @@
-import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
+import {
+  RestaurantFilterDto,
+  RestaurantFeedOutputDto,
+} from '../dtos/restaurant-dto.js';
 
 import { RestaurantService } from './restaurant-service.js';
 import { UserPreferencesService } from './user-preferences-service.js';
 
 export class FeedService {
   static async restaurantsOnFeed(
-    id: string,
+    user_id: string,
     latitude?: number,
     longitude?: number,
     proximity?: number,
   ) {
-    const userPreferences = await UserPreferencesService.findByUserId(id);
+    const userPreferences = await UserPreferencesService.findByUserId(user_id);
 
     if (!userPreferences) {
       throw new Error(
@@ -58,9 +61,9 @@ export class FeedService {
           'Unable to find restaurants by user preferences and near this geolocation.',
         );
       }
-      return restaurantsNearMe;
+      return RestaurantFeedOutputDto.fromEntities(restaurantsNearMe);
     }
 
-    return scoredRestaurants;
+    return RestaurantFeedOutputDto.fromEntities(scoredRestaurants);
   }
 }
