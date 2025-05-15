@@ -10,6 +10,7 @@ import { hashPassword } from '../utils/crypto.js';
 import { geocodeAddress } from '../utils/geocoding.js';
 
 import { OpeningHourService } from './opening-hour-service.js';
+import { UserPreferencesService } from './user-preferences-service.js';
 
 export class RestaurantService {
   static async createRestaurant(input: CreateRestaurantDto) {
@@ -47,6 +48,35 @@ export class RestaurantService {
     }
 
     return RestaurantOutputDto.fromEntity(restaurantEntity);
+  }
+
+  static async getRandomRestaurant(
+    userId: string,
+    filters: RestaurantFilterDto,
+  ) {
+    let restaurants;
+
+    const hasFilters = filters.tags || filters.price_range;
+
+    if (hasFilters) {
+      restaurants =
+        await RestaurantRepository.findByAnyTagOrPriceRange(filters);
+    }
+
+    if (!restaurants || restaurants.length === 0) {
+      const userPreferences = await UserPreferencesService.findByUserId(userId);
+      restaurants =
+        await RestaurantRepository.findByUserPreferences(userPreferences);
+    }
+
+    if (!restaurants || restaurants.length === 0) {
+      throw new Error('Restaurants not found.');
+    }
+
+    const randomIndex = Math.floor(Math.random() * restaurants.length);
+    const randomRestaurant = restaurants[randomIndex];
+
+    return RestaurantOutputDto.fromEntity(randomRestaurant);
   }
 
   static async filterRestaurantListByProximity(
