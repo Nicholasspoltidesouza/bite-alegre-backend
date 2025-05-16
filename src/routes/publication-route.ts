@@ -1,9 +1,9 @@
-// import { Router } from 'express';
+import { Router } from 'express';
 
-// import { PublicationController } from '../controllers/publication-controller.js';
+import { PublicationController } from '../controllers/publication-controller.js';
 
-// const router = Router();
+const router = Router();
 
-// router.post('/publicacoes', PublicationController.create);
+router.post('/publicacoes', PublicationController.create);
 
-// export default router;
+export default router;
