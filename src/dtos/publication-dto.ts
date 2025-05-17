@@ -4,7 +4,6 @@ export interface publicationRequestDto {
   media: string;
   description: string;
   restaurant_id: string;
-  user_id: string;
 }
 
 export class publicationResponseDto {

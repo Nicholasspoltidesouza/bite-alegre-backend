@@ -8,12 +8,14 @@ export class PublicationController {
     try {
       const { sub: user_id } = (req as AuthenticatedRequest).user;
       const { description, restaurant_id, media } = req.body;
-      const publication = await PublicationService.create({
-        description,
-        restaurant_id,
-        media,
+      const publication = await PublicationService.create(
+        {
+          description,
+          restaurant_id,
+          media,
+        },
         user_id,
-      });
+      );
       res.status(201).json(publication);
     } catch (error) {
       console.error('Error creating publication: ', error);

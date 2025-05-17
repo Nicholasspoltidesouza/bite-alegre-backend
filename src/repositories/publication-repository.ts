@@ -2,16 +2,21 @@ import { PrismaClient, Publication } from '@prisma/client';
 
 import { publicationRequestDto } from '../dtos/publication-dto.js';
 
-export class PublicationRepository {
-  static async create(data: publicationRequestDto): Promise<Publication> {
-    const { media, description, restaurant_id, user_id } = data;
+const prisma = new PrismaClient();
 
-    return PrismaClient.checkin.create({
+export class PublicationRepository {
+  static async create(
+    data: Omit<publicationRequestDto, 'media'> & { url: string },
+    user_id: string,
+  ): Promise<Publication> {
+    const { description, restaurant_id, url } = data;
+
+    return prisma.publication.create({
       data: {
-        media,
         description,
         restaurant_id,
         user_id,
+        url,
       },
     });
   }

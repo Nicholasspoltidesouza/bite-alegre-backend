@@ -9,8 +9,9 @@ import { UserRepository } from '../repositories/user-repository.js';
 export class PublicationService {
   static async create(
     input: publicationRequestDto,
+    user_id: string,
   ): Promise<publicationResponseDto> {
-    const { media, description, restaurant_id, user_id } = input;
+    const { media, description, restaurant_id } = input;
 
     if (!media || !description || !restaurant_id) {
       throw new Error('Required fields: media, description, restaurant');
@@ -26,9 +27,19 @@ export class PublicationService {
       throw new Error('Usuário não encontrado!');
     }
 
-    const addMediaEntity = await PublicationRepository.create({
-      ...input,
-    });
+    // upload pro S3
+    // const url = await uploadMediaToS3(media);
+
+    const url = media; // Placeholder
+
+    const addMediaEntity = await PublicationRepository.create(
+      {
+        ...input,
+        restaurant_id,
+        url,
+      },
+      user_id,
+    );
 
     return publicationResponseDto.fromEntity(addMediaEntity);
   }
