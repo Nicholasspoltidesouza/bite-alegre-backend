@@ -5,6 +5,7 @@ import authRoutes from './routes/auth-routes.js';
 import checkinRoutes from './routes/checkin-route.js';
 import feedRoutes from './routes/feed-routes.js';
 import openingHourRoutes from './routes/opening-hour-routes.js';
+import publicationRoutes from './routes/publication-route.js';
 import restaurantRoutes from './routes/restaurant-routes.js';
 import reviewRoutes from './routes/review-route.js';
 import tagRoutes from './routes/tag-routes.js';
@@ -33,6 +34,7 @@ app.use('/api', checkinRoutes);
 app.use('/api', reviewRoutes);
 app.use('/api', authRoutes);
 app.use('/api', feedRoutes);
+app.use('/api', publicationRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

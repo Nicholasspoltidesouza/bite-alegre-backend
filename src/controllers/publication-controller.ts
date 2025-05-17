@@ -7,7 +7,12 @@ export class PublicationController {
   static async create(req: Request, res: Response) {
     try {
       const { sub: user_id } = (req as AuthenticatedRequest).user;
-      const { description, restaurant_id, media } = req.body;
+      const { description, restaurant_id } = req.body;
+      if (!req.file) {
+        res.status(400).json({ error: 'Mídia não pode ser vazia!' });
+        return;
+      }
+      const media = req.file;
       const publication = await PublicationService.create(
         {
           description,
@@ -18,8 +23,13 @@ export class PublicationController {
       );
       res.status(201).json(publication);
     } catch (error) {
-      console.error('Error creating publication: ', error);
-      res.status(500).json({ error: 'Failed to fetch publication' });
+      console.error(
+        'Error creating publication: ',
+        JSON.stringify(error, null, 2),
+      );
+      res.status(500).json({
+        error: error instanceof Error ? error.message : 'Erro inesperado',
+      });
     }
   }
 }

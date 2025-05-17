@@ -13,8 +13,14 @@ export class PublicationService {
   ): Promise<publicationResponseDto> {
     const { media, description, restaurant_id } = input;
 
-    if (!media || !description || !restaurant_id) {
-      throw new Error('Required fields: media, description, restaurant');
+    if (!media) {
+      throw new Error('Mídia não pode ser vazia!');
+    }
+    if (!description) {
+      throw new Error('Descrição não pode ser vazia!');
+    }
+    if (!restaurant_id) {
+      throw new Error('Restaurante não pode ser vazio!');
     }
 
     const existingRestaurant =
@@ -30,7 +36,7 @@ export class PublicationService {
     // upload pro S3
     // const url = await uploadMediaToS3(media);
 
-    const url = media; // Placeholder
+    const url = media.originalname; // Placeholder
 
     const publicationEntity = await PublicationRepository.create(
       {
