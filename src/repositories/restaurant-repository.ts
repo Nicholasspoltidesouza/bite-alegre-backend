@@ -151,7 +151,10 @@ export class RestaurantRepository {
           some: { tagId: { in: [...userPreferences.map((p) => p.tag_id)] } },
         },
       },
-      include: { tags: true },
+      include: {
+        tags: true,
+        review: true,
+      },
     });
   }
 }

@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 
+import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { CheckinService } from '../services/checkin-service.js';
 
 export class CheckinController {
   static async create(req: Request, res: Response) {
     try {
-      const { user_id } = req.body;
+      const { sub: user_id } = (req as AuthenticatedRequest).user;
       const restaurant_id = req.params.id;
 
       const checkin = await CheckinService.createCheckin({
