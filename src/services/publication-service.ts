@@ -32,7 +32,7 @@ export class PublicationService {
 
     const url = media; // Placeholder
 
-    const addMediaEntity = await PublicationRepository.create(
+    const publicationEntity = await PublicationRepository.create(
       {
         ...input,
         restaurant_id,
@@ -41,6 +41,6 @@ export class PublicationService {
       user_id,
     );
 
-    return publicationResponseDto.fromEntity(addMediaEntity);
+    return publicationResponseDto.fromEntity(publicationEntity);
   }
 }
