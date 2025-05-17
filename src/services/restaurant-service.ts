@@ -69,7 +69,9 @@ export class RestaurantService {
     }
 
     if (!restaurants || restaurants.length === 0) {
-      throw new Error('Restaurants not found.');
+      throw new Error(
+        'No restaurants found matching the given filters or user preferences.',
+      );
     }
 
     const randomIndex = Math.floor(Math.random() * restaurants.length);

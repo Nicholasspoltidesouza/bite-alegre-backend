@@ -9,6 +9,8 @@ import { calculateDistance } from '../utils/calculateDistance.js';
 
 const prisma = new PrismaClient();
 
+const PRICE_RANGE_TOLERANCE = 5;
+
 export class RestaurantRepository {
   static async findByEmail(email: string): Promise<Restaurant | null> {
     return prisma.restaurant.findUnique({
@@ -174,8 +176,8 @@ export class RestaurantRepository {
     if (filters.price_range !== undefined) {
       conditions.push({
         average_price: {
-          gte: filters.price_range - 5,
-          lte: filters.price_range + 5,
+          gte: filters.price_range - PRICE_RANGE_TOLERANCE,
+          lte: filters.price_range + PRICE_RANGE_TOLERANCE,
         },
       });
     }
