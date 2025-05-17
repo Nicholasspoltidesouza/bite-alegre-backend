@@ -59,8 +59,7 @@ export class RestaurantService {
     const hasFilters = filters.tags || filters.price_range;
 
     if (hasFilters) {
-      restaurants =
-        await RestaurantRepository.findByAnyTagOrPriceRange(filters);
+      restaurants = await RestaurantRepository.findByTagsOrPriceRange(filters);
     }
 
     if (!restaurants || restaurants.length === 0) {

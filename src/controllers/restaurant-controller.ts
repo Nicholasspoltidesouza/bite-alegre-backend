@@ -83,7 +83,7 @@ export class RestaurantController {
     }
   }
 
-  static async sortRandom(req: Request, res: Response) {
+  static async randomDraw(req: Request, res: Response) {
     const { sub: id } = (req as AuthenticatedRequest).user;
 
     const filters: RestaurantFilterDto = {

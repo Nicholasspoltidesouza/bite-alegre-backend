@@ -108,7 +108,7 @@ export class RestaurantRepository {
       where.tags = {
         some: {
           tag: {
-            OR: [{ id: { in: filters.tags } }, { name: { in: filters.tags } }],
+            id: { in: filters.tags },
           },
         },
       };
@@ -166,7 +166,7 @@ export class RestaurantRepository {
     });
   }
 
-  static async findByAnyTagOrPriceRange(
+  static async findByTagsOrPriceRange(
     filters: Pick<RestaurantFilterDto, 'tags' | 'price_range'>,
   ): Promise<Restaurant[]> {
     const conditions: any[] = [];
@@ -187,10 +187,7 @@ export class RestaurantRepository {
         tags: {
           some: {
             tag: {
-              OR: [
-                { id: { in: tagsAsStrings } },
-                { name: { in: tagsAsStrings } },
-              ],
+              OR: [{ id: { in: tagsAsStrings } }],
             },
           },
         },
