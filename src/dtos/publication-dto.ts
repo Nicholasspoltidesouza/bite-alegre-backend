@@ -1,5 +1,5 @@
 import { Publication } from '@prisma/client';
-import type Express from 'express';
+import { Express } from 'express';
 
 export interface publicationRequestDto {
   media: Express.Multer.File;
