@@ -84,13 +84,7 @@ export class RestaurantService {
       updateData.longitude = lng;
     }
 
-    const updatedRestaurant = await RestaurantRepository.update(
-      restaurantId,
-      updateData,
-    );
-
     if (tags) {
-      console.log(tags);
       await RestaurantRepository.updateTags(restaurantId, tags);
     }
 
@@ -114,6 +108,11 @@ export class RestaurantService {
         await OpeningHourService.addPeriods(restaurantId, add);
       }
     }
+
+    const updatedRestaurant = await RestaurantRepository.update(
+      restaurantId,
+      updateData,
+    );
 
     return RestaurantOutputDto.fromEntity(updatedRestaurant);
   }

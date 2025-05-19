@@ -5,11 +5,13 @@ import { authenticate } from '../middlewares/authenticate.js';
 
 const router = Router();
 
-router.use('/restaurants/random-draw', authenticate);
-router.get('/restaurants/random-draw', RestaurantController.randomDraw);
+router.get(
+  '/restaurants/random-draw',
+  authenticate,
+  RestaurantController.randomDraw,
+);
 
-router.use('/restaurants', authenticate);
-router.patch('/restaurants', RestaurantController.edit);
+router.patch('/restaurants', authenticate, RestaurantController.edit);
 
 router.post('/restaurants', RestaurantController.create);
 router.get('/restaurants', RestaurantController.list);
