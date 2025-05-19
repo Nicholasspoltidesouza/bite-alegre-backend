@@ -9,6 +9,8 @@ import { calculateDistance } from '../utils/calculateDistance.js';
 
 const prisma = new PrismaClient();
 
+const PRICE_RANGE_TOLERANCE = 5;
+
 export class RestaurantRepository {
   static async findByEmail(email: string): Promise<Restaurant | null> {
     return prisma.restaurant.findUnique({
@@ -99,14 +101,17 @@ export class RestaurantRepository {
 
     if (filters.price_range !== undefined) {
       where.average_price = {
-        lte: filters.price_range,
+        gte: filters.price_range - 5,
+        lte: filters.price_range + 5,
       };
     }
 
     if (filters.tags && filters.tags.length > 0) {
       where.tags = {
         some: {
-          name: { in: filters.tags },
+          tag: {
+            id: { in: filters.tags },
+          },
         },
       };
     }
@@ -145,12 +150,56 @@ export class RestaurantRepository {
   }
 
   static async findByUserPreferences(userPreferences: UserPreferenceDto[]) {
+    const tagIds = userPreferences.map((p) => p.tag_id);
+
     return prisma.restaurant.findMany({
       where: {
         tags: {
-          some: { tagId: { in: [...userPreferences.map((p) => p.tag_id)] } },
+          some: {
+            tag: {
+              id: {
+                in: tagIds,
+              },
+            },
+          },
         },
       },
+      include: { tags: true },
+    });
+  }
+
+  static async findByTagsOrPriceRange(
+    filters: Pick<RestaurantFilterDto, 'tags' | 'price_range'>,
+  ): Promise<Restaurant[]> {
+    const conditions: any[] = [];
+
+    if (filters.price_range !== undefined) {
+      conditions.push({
+        average_price: {
+          gte: filters.price_range - PRICE_RANGE_TOLERANCE,
+          lte: filters.price_range + PRICE_RANGE_TOLERANCE,
+        },
+      });
+    }
+
+    if (filters.tags && filters.tags.length > 0) {
+      const tagsAsStrings = filters.tags.map(String);
+
+      conditions.push({
+        tags: {
+          some: {
+            tag: {
+              OR: [{ id: { in: tagsAsStrings } }],
+            },
+          },
+        },
+      });
+    }
+
+    const where = conditions.length > 0 ? { OR: conditions } : {};
+
+    return prisma.restaurant.findMany({
+      where,
       include: {
         tags: true,
         review: true,

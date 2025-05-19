@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
+import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
 
 export class RestaurantController {
@@ -73,6 +74,34 @@ export class RestaurantController {
 
       if (!restaurant) {
         res.status(404).json({ error: 'Restaurant not found' });
+      }
+
+      res.status(200).json(restaurant);
+    } catch (error) {
+      console.error('Error finding one restaurant:', error);
+      res.status(500).json({ error: 'Failed to find restaurant' });
+    }
+  }
+
+  static async randomDraw(req: Request, res: Response) {
+    const { sub: id } = (req as AuthenticatedRequest).user;
+
+    const filters: RestaurantFilterDto = {
+      price_range: req.query.price_range
+        ? Number(req.query.price_range)
+        : undefined,
+      tags: req.query.tags ? req.query.tags.toString().split(',') : undefined,
+    };
+
+    try {
+      const restaurant = await RestaurantService.getRandomRestaurant(
+        id,
+        filters,
+      );
+
+      if (!restaurant) {
+        res.status(404).json({ error: 'Restaurant not found' });
+        return;
       }
 
       res.status(200).json(restaurant);
