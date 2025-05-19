@@ -32,4 +32,9 @@ export class RestaurantTagService {
 
     await Promise.all(createPromises);
   }
+
+  static async getByRestaurantId(restaurantId: string) {
+    const tags = await RestaurantTagRepository.findByRestaurantId(restaurantId);
+    return tags.map((tag) => tag.tagId);
+  }
 }
