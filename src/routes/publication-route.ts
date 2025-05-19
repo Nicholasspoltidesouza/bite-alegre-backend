@@ -7,7 +7,7 @@ import { upload } from '../middlewares/upload.js';
 const router = Router();
 
 router.post(
-  '/publicacoes',
+  '/post',
   authenticate,
   upload.single('media'),
   PublicationController.create,
