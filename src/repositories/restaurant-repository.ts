@@ -83,6 +83,7 @@ export class RestaurantRepository {
       include: {
         review: true,
         tags: true,
+        openingHours: true,
       },
     });
   }
@@ -204,6 +205,50 @@ export class RestaurantRepository {
         tags: true,
         review: true,
       },
+    });
+  }
+
+  static async update(
+    restaurantId: string,
+    data: Partial<CreateRestaurantDto>,
+  ): Promise<Restaurant> {
+    return prisma.restaurant.update({
+      where: { id: restaurantId },
+      data: {
+        name: data.name,
+        description: data.description,
+        address: data.address,
+        email: data.email,
+        average_price: data.averagePrice ?? undefined,
+        phone: data.phone,
+        profilePhoto: data.profilePhoto,
+        latitude: data.latitude ?? undefined,
+        longitude: data.longitude ?? undefined,
+      },
+      include: {
+        tags: true,
+        review: true,
+        openingHours: true,
+      },
+    });
+  }
+
+  static async updateTags(
+    restaurantId: string,
+    tagIds: string[],
+  ): Promise<void> {
+    await prisma.restaurantTag.deleteMany({
+      where: {
+        restaurantId,
+      },
+    });
+
+    await prisma.restaurantTag.createMany({
+      data: tagIds.map((tagId) => ({
+        restaurantId,
+        tagId,
+      })),
+      skipDuplicates: true,
     });
   }
 }
