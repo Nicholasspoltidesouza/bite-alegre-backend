@@ -42,6 +42,7 @@ model Restaurant {
 
   review       Review[]
   openingHours OpeningHour[]
+  publications   Publication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -76,6 +77,7 @@ model User {
   userPreferences User_Preferences[]
   checkin         Checkin[]
   review          Review[]
+  publications   Publication[]
 }
 
 enum Gender {
@@ -134,6 +136,18 @@ model Review {
   restaurant_id String
   feedback      String?
   stars         Decimal
+
+  user       User       @relation(fields: [user_id], references: [id])
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
+}
+
+model Publication {
+  id          String   @id @default(uuid())
+  user_id      String
+  description String
+  restaurant_id  String
+  url         String
+  createdAt   DateTime @default(now())
 
   user       User       @relation(fields: [user_id], references: [id])
   restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
