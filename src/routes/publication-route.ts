@@ -14,5 +14,6 @@ router.post(
 );
 
 router.get('/post/:userId', authenticate, PublicationController.listByUser);
+router.get('/post/:id', PublicationController.find);
 
 export default router;

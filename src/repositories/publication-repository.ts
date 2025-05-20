@@ -32,4 +32,9 @@ export class PublicationRepository {
       },
     });
   }
+  static async findOne(id: string): Promise<Publication | null> {
+    return prisma.publication.findUnique({
+      where: { id },
+    });
+  }
 }

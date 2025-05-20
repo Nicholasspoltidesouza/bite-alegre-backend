@@ -32,6 +32,22 @@ export class PublicationController {
       });
     }
   }
+
+  static async find(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const post = await PublicationService.getPostById(id);
+
+      if (!post) {
+        res.status(404).json({ error: 'Post not found' });
+      }
+
+      res.status(200).json(post);
+    } catch (error) {
+      console.error('Error finding one post:', error);
+      res.status(500).json({ error: 'Failed to find post' });
+    }
+  }
   static async listByUser(req: Request, res: Response) {
     try {
       const { userId } = req.params;
