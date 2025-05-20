@@ -1,6 +1,7 @@
 import {
   publicationRequestDto,
   publicationResponseDto,
+  PublicationOutputDto,
 } from '../dtos/publication-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
@@ -48,5 +49,13 @@ export class PublicationService {
     );
 
     return publicationResponseDto.fromEntity(publicationEntity);
+  }
+
+  static async getPostById(id: string) {
+    const post = await PublicationRepository.findOne(id);
+    if (!post) {
+      throw new Error('Post not found.');
+    }
+    return PublicationOutputDto.fromEntity(post);
   }
 }

@@ -22,3 +22,28 @@ export class publicationResponseDto {
     return entities.map(publicationResponseDto.fromEntity);
   }
 }
+
+export class PublicationOutputDto {
+  user_id: string;
+  url: string;
+  description: string;
+  restaurant_id: string;
+
+  constructor(data: PublicationOutputDto) {
+    this.user_id = data.user_id;
+    this.url = data.url;
+    this.description = data.description;
+    this.restaurant_id = data.restaurant_id;
+  }
+  static fromEntity(entity: Publication): PublicationOutputDto {
+    return new PublicationOutputDto({
+      user_id: entity.user_id,
+      url: entity.url,
+      description: entity.description,
+      restaurant_id: entity.restaurant_id,
+    });
+  }
+  static fromEntities(entities: Publication[]): PublicationOutputDto[] {
+    return entities.map(PublicationOutputDto.fromEntity);
+  }
+}

@@ -13,4 +13,6 @@ router.post(
   PublicationController.create,
 );
 
+router.get('/post/:id', PublicationController.find);
+
 export default router;
