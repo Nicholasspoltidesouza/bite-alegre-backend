@@ -24,17 +24,20 @@ export class publicationResponseDto {
 }
 
 export class PublicationListItemDto {
+  id: string;
   url: string;
   description: string;
   restaurantName: string;
   restaurantPhoto: string | null;
 
   constructor(data: {
+    id: string;
     url: string;
     description: string;
     restaurantName: string;
     restaurantPhoto: string | null;
   }) {
+    this.id = data.id;
     this.url = data.url;
     this.description = data.description;
     this.restaurantName = data.restaurantName;
@@ -47,6 +50,7 @@ export class PublicationListItemDto {
     },
   ): PublicationListItemDto {
     return new PublicationListItemDto({
+      id: entity.id,
       url: entity.url,
       description: entity.description,
       restaurantName: entity.restaurant.name,
@@ -64,6 +68,7 @@ export class PublicationListItemDto {
     return entities.map(PublicationListItemDto.fromEntity);
   }
 }
+
 export class PublicationOutputDto {
   user_id: string;
   user_nickname: string;

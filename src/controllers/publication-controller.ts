@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { PublicationService } from '../services/publication-service.js';
 
@@ -63,6 +64,27 @@ export class PublicationController {
       res.status(500).json({
         error: err instanceof Error ? err.message : 'unexpected error',
       });
+    }
+  }
+  static async list(req: Request, res: Response) {
+    const filters: RestaurantFilterDto = {
+      name: req.query.name?.toString(),
+      price_range: req.query.price_range
+        ? Number(req.query.price_range)
+        : undefined,
+      tags: req.query.tags ? req.query.tags.toString().split(',') : undefined,
+    };
+    try {
+      const { userId } = req.params;
+      const data = await PublicationService.getPublications(filters, userId);
+      if (data.length === 0) {
+        res
+          .status(404)
+          .json({ message: 'No publications found for this user' });
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).json({ error: 'Failed to fetch posts' });
     }
   }
 }

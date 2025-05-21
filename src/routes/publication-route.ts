@@ -12,12 +12,7 @@ router.post(
   upload.single('media'),
   PublicationController.create,
 );
-
 router.get('/post/:id', PublicationController.find);
-router.get(
-  '/post/user/:userId',
-  authenticate,
-  PublicationController.listByUser,
-);
+router.get('/post/user/:userId', authenticate, PublicationController.list);
 
 export default router;
