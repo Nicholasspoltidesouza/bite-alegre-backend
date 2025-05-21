@@ -1,6 +1,7 @@
 import {
   publicationRequestDto,
   publicationResponseDto,
+  PublicationListItemDto,
 } from '../dtos/publication-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
@@ -48,5 +49,9 @@ export class PublicationService {
     );
 
     return publicationResponseDto.fromEntity(publicationEntity);
+  }
+  static async listByUser(userId: string): Promise<PublicationListItemDto[]> {
+    const entities = await PublicationRepository.findByUser(userId);
+    return PublicationListItemDto.fromEntities(entities);
   }
 }

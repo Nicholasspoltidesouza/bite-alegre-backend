@@ -32,4 +32,21 @@ export class PublicationController {
       });
     }
   }
+  static async listByUser(req: Request, res: Response) {
+    try {
+      const { userId } = req.params;
+      const data = await PublicationService.listByUser(userId);
+      if (data.length === 0) {
+        res
+          .status(404)
+          .json({ message: 'No publications found for this user' });
+      }
+      res.json(data);
+    } catch (err) {
+      console.error('Error listing publications:', err);
+      res.status(500).json({
+        error: err instanceof Error ? err.message : 'unexpected error',
+      });
+    }
+  }
 }
