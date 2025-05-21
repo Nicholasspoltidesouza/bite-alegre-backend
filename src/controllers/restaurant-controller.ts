@@ -44,6 +44,51 @@ export class RestaurantController {
     }
   }
 
+  static async edit(req: Request, res: Response) {
+    const { sub: restaurantId } = (req as AuthenticatedRequest).user;
+
+    const {
+      profilePhoto,
+      name,
+      description,
+      address,
+      email,
+      averagePrice,
+      phone,
+      openingPeriods,
+      tags,
+    } = req.body;
+
+    try {
+      const updatedRestaurant = await RestaurantService.updateRestaurant({
+        restaurantId,
+        profilePhoto,
+        name,
+        description,
+        address,
+        email,
+        averagePrice,
+        phone,
+        openingPeriods,
+        tags,
+      });
+
+      if (!updatedRestaurant) {
+        res.status(404).json({ error: 'Restaurante não encontrado' });
+      }
+
+      res.status(200).json({
+        message: 'Restaurante atualizado com sucesso',
+        data: updatedRestaurant,
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar restaurante:', error);
+      res
+        .status(500)
+        .json({ error: 'Erro interno ao atualizar o restaurante' });
+    }
+  }
+
   static async list(req: Request, res: Response) {
     const geo = req.query.geolocation?.toString().split(',').map(Number);
 

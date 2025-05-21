@@ -1,6 +1,6 @@
 import { Prisma, Restaurant, Review } from '@prisma/client';
 
-import { OpeningPeriodsDto } from './opening-hour-dto.js';
+import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
 
 export interface CreateRestaurantDto {
@@ -19,6 +19,25 @@ export interface CreateRestaurantDto {
   longitude?: number;
   openingPeriods?: OpeningPeriodsDto;
 }
+
+export type UpdateOpeningPeriodsDto = {
+  add?: OpeningPeriodsDto;
+  update?: (OpeningPeriodDto & { periodId: string })[];
+  delete?: string[];
+};
+
+export type UpdateRestaurantDto = {
+  restaurantId: string;
+  name?: string;
+  description?: string;
+  address?: string;
+  email?: string;
+  averagePrice?: Prisma.Decimal;
+  phone?: string;
+  profilePhoto?: string;
+  tags?: string[];
+  openingPeriods?: UpdateOpeningPeriodsDto;
+};
 
 export interface RestaurantFilterDto {
   name?: string;

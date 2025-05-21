@@ -2,6 +2,7 @@ import {
   CreateRestaurantDto,
   RestaurantFilterDto,
   RestaurantOutputDto,
+  UpdateRestaurantDto,
 } from '../dtos/restaurant-dto.js';
 import { UserPreferenceDto } from '../dtos/user-preferences-dto.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
@@ -48,6 +49,72 @@ export class RestaurantService {
     }
 
     return RestaurantOutputDto.fromEntity(restaurantEntity);
+  }
+
+  static async updateRestaurant({
+    restaurantId,
+    name,
+    description,
+    address,
+    email,
+    averagePrice,
+    phone,
+    profilePhoto,
+    tags,
+    openingPeriods,
+  }: UpdateRestaurantDto): Promise<RestaurantOutputDto | null> {
+    const restaurant = await RestaurantRepository.findOne(restaurantId);
+    if (!restaurant) {
+      return null;
+    }
+
+    const updateData: Partial<CreateRestaurantDto> = {
+      name,
+      description,
+      address,
+      email,
+      averagePrice,
+      phone,
+      profilePhoto,
+    };
+
+    if (address && address !== restaurant.address) {
+      const { lat, lng } = await geocodeAddress(address);
+      updateData.latitude = lat;
+      updateData.longitude = lng;
+    }
+
+    if (tags) {
+      await RestaurantRepository.updateTags(restaurantId, tags);
+    }
+
+    if (openingPeriods) {
+      const { add, update, delete: toDelete } = openingPeriods;
+
+      if (toDelete && toDelete.length) {
+        for (const periodId of toDelete) {
+          await OpeningHourService.deletePeriod(restaurantId, periodId);
+        }
+      }
+
+      if (update && update.length) {
+        for (const item of update) {
+          const { periodId, ...rest } = item;
+          await OpeningHourService.updatePeriod(restaurantId, periodId, rest);
+        }
+      }
+
+      if (add && add.length) {
+        await OpeningHourService.addPeriods(restaurantId, add);
+      }
+    }
+
+    const updatedRestaurant = await RestaurantRepository.update(
+      restaurantId,
+      updateData,
+    );
+
+    return RestaurantOutputDto.fromEntity(updatedRestaurant);
   }
 
   static async getRandomRestaurant(
