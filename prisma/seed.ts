@@ -78,7 +78,7 @@ async function seedUsers() {
       name: 'Guilherme Medeiros',
       nickname: 'gmedeiros',
       email: 'guilherme@bite.io',
-      password: await hashPassword('gabriel123'),
+      password: await hashPassword('guilherme123'),
       phone: null,
       gender: Gender.MASCULINO,
       birthDate: new Date('1994-04-18'),
