@@ -21,7 +21,7 @@ export class PublicationRepository {
     });
   }
 
-    static async findByUser(userId: string) {
+  static async findByUser(userId: string) {
     return prisma.publication.findMany({
       where: { user_id: userId },
       orderBy: { createdAt: 'desc' },
