@@ -66,25 +66,52 @@ export class PublicationListItemDto {
 }
 export class PublicationOutputDto {
   user_id: string;
+  user_nickname: string;
   url: string;
   description: string;
   restaurant_id: string;
+  restaurant_name: string;
+  restaurant_tags: { id: string; name: string; type: string }[];
 
   constructor(data: PublicationOutputDto) {
     this.user_id = data.user_id;
+    this.user_nickname = data.user_nickname;
     this.url = data.url;
     this.description = data.description;
     this.restaurant_id = data.restaurant_id;
+    this.restaurant_name = data.restaurant_name;
+    this.restaurant_tags = data.restaurant_tags;
   }
-  static fromEntity(entity: Publication): PublicationOutputDto {
+
+  static fromEntity(
+    entity: Publication & {
+      user: { nickname: string };
+      restaurant: {
+        name: string;
+        tags: { tag: { id: string; name: string; type: string } }[];
+      };
+    },
+  ): PublicationOutputDto {
     return new PublicationOutputDto({
       user_id: entity.user_id,
+      user_nickname: entity.user.nickname,
       url: entity.url,
       description: entity.description,
       restaurant_id: entity.restaurant_id,
+      restaurant_name: entity.restaurant.name,
+      restaurant_tags: entity.restaurant.tags.map((t) => t.tag),
     });
   }
-  static fromEntities(entities: Publication[]): PublicationOutputDto[] {
+
+  static fromEntities(
+    entities: (Publication & {
+      user: { nickname: string };
+      restaurant: {
+        name: string;
+        tags: { tag: { id: string; name: string; type: string } }[];
+      };
+    })[],
+  ): PublicationOutputDto[] {
     return entities.map(PublicationOutputDto.fromEntity);
   }
 }
