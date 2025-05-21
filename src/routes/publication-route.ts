@@ -13,4 +13,6 @@ router.post(
   PublicationController.create,
 );
 
+router.get('/post/:userId', authenticate, PublicationController.listByUser);
+
 export default router;
