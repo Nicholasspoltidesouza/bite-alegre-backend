@@ -6,6 +6,7 @@ import {
 } from '../dtos/restaurant-dto.js';
 import { UserPreferenceDto } from '../dtos/user-preferences-dto.js';
 import { calculateDistance } from '../utils/calculateDistance.js';
+import { geocodeAddress } from '../utils/geocoding.js';
 
 const prisma = new PrismaClient();
 
@@ -136,6 +137,11 @@ export class RestaurantRepository {
         review: true,
       },
     });
+
+    if (filters.address) {
+      const { lat, lng } = await geocodeAddress(filters.address);
+      filters.geolocation = [lat, lng];
+    }
 
     if (filters.geolocation && filters.proximity) {
       const [lat, lon] = filters.geolocation;

@@ -23,6 +23,7 @@ export interface CreateRestaurantDto {
 export interface RestaurantFilterDto {
   name?: string;
   geolocation?: [number, number];
+  address?: string;
   proximity?: number;
   price_range?: number;
   tags?: string[];
