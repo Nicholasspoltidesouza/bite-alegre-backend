@@ -22,12 +22,14 @@ export class UserSearchOutputDto {
   profilePhoto?: string | null;
   name: string;
   nickname: string;
+  influencer?: boolean | null;
 
   constructor(data: UserSearchOutputDto) {
     this.id = data.id;
     this.profilePhoto = data.profilePhoto ?? null;
     this.name = data.name;
     this.nickname = data.nickname;
+    this.influencer = data.influencer ?? false;
   }
 
   static fromEntity(entity: User): UserSearchOutputDto {
@@ -36,6 +38,7 @@ export class UserSearchOutputDto {
       profilePhoto: entity.profilePhoto,
       name: entity.name,
       nickname: entity.nickname,
+      influencer: entity.influencer,
     });
   }
 
@@ -50,6 +53,7 @@ export class UserOutputDto {
   name!: string;
   nickname!: string;
   reviews!: UserReviewOutputDto[];
+  influencer?: boolean | null;
   checkinsWithoutReview!: UserCheckinOutputDto[];
 
   constructor(data: {
@@ -57,6 +61,7 @@ export class UserOutputDto {
     profilePhoto?: string | null;
     name: string;
     nickname: string;
+    influencer?: boolean | null;
     reviews: UserReviewOutputDto[];
     checkinsWithoutReview: UserCheckinOutputDto[];
   }) {
@@ -64,6 +69,7 @@ export class UserOutputDto {
     this.profilePhoto = data.profilePhoto ?? null;
     this.name = data.name;
     this.nickname = data.nickname;
+    this.influencer = data.influencer ?? false;
     this.reviews = data.reviews;
     this.checkinsWithoutReview = data.checkinsWithoutReview;
   }
@@ -100,6 +106,7 @@ export class UserOutputDto {
       profilePhoto: user.profilePhoto,
       name: user.name,
       nickname: user.nickname,
+      influencer: user.influencer,
       reviews: reviewsDto,
       checkinsWithoutReview: checkinsDto,
     });
