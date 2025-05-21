@@ -38,7 +38,7 @@ export class UserSearchOutputDto {
       profilePhoto: entity.profilePhoto,
       name: entity.name,
       nickname: entity.nickname,
-      influencer: entity.influencer,
+      influencer: entity.influencer ?? false,
     });
   }
 

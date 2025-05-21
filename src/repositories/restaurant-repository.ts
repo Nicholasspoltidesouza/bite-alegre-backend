@@ -139,8 +139,13 @@ export class RestaurantRepository {
     });
 
     if (filters.address) {
-      const { lat, lng } = await geocodeAddress(filters.address);
-      filters.geolocation = [lat, lng];
+      try {
+        const { lat, lng } = await geocodeAddress(filters.address);
+        filters.geolocation = [lat, lng];
+      } catch (error) {
+        console.error('Error during geocoding:', error);
+        filters.geolocation = undefined;
+      }
     }
 
     if (filters.geolocation && filters.proximity) {
