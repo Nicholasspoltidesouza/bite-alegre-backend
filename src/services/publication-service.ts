@@ -4,6 +4,7 @@ import {
   PublicationListItemDto,
   PublicationOutputDto,
 } from '../dtos/publication-dto.js';
+import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
 import { UserRepository } from '../repositories/user-repository.js';
@@ -62,5 +63,14 @@ export class PublicationService {
       throw new Error('Post not found.');
     }
     return PublicationOutputDto.fromEntity(post);
+  }
+
+  static async getPublications(filters: RestaurantFilterDto, userId: string) {
+    const restaurants = await RestaurantRepository.findByFilters(filters);
+    const posts = await PublicationRepository.findByRestaurant(
+      restaurants.map((r) => r.id),
+      userId,
+    );
+    return PublicationListItemDto.fromEntities(posts);
   }
 }

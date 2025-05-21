@@ -32,6 +32,25 @@ export class PublicationRepository {
       },
     });
   }
+
+  static async findByRestaurant(restaurant_ids: string[], userId: string) {
+    return prisma.publication.findMany({
+      where: {
+        restaurant_id: { in: restaurant_ids },
+        user_id: userId,
+      },
+      include: {
+        restaurant: {
+          select: {
+            name: true,
+            profilePhoto: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   static async findOne(id: string): Promise<
     | (Publication & {
         user: { nickname: string };
