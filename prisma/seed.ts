@@ -151,7 +151,7 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
     {
       profilePhoto:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQEIq6ZWfCoYhGJKpvoxLjHiCJJw32nToHSvg&s',
-      bannerphoto:
+      bannerPhoto:
         'https://img.lacadordeofertas.com.br/site/MTA1MDBfL3RtcC9waHBrNDVzUDZfMTUyODIyMTEwMg==.jpg',
       name: 'Nono Ludovico',
       address: 'Av. Lavras, 328 - Petrópolis',
