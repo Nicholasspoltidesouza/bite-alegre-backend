@@ -20,4 +20,16 @@ export class PublicationRepository {
       },
     });
   }
+
+    static async findByUser(userId: string) {
+    return prisma.publication.findMany({
+      where: { user_id: userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        restaurant: {
+          select: { name: true, profilePhoto: true },
+        },
+      },
+    });
+  }
 }
