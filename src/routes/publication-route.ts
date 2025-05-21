@@ -13,6 +13,11 @@ router.post(
   PublicationController.create,
 );
 
-router.get('/post/:userId', authenticate, PublicationController.listByUser);
+router.get('/post/:id', PublicationController.find);
+router.get(
+  '/post/user/:userId',
+  authenticate,
+  PublicationController.listByUser,
+);
 
 export default router;

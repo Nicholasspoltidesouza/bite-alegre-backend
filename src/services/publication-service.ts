@@ -2,6 +2,7 @@ import {
   publicationRequestDto,
   publicationResponseDto,
   PublicationListItemDto,
+  PublicationOutputDto,
 } from '../dtos/publication-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
@@ -53,5 +54,13 @@ export class PublicationService {
   static async listByUser(userId: string): Promise<PublicationListItemDto[]> {
     const entities = await PublicationRepository.findByUser(userId);
     return PublicationListItemDto.fromEntities(entities);
+  }
+
+  static async getPostById(id: string) {
+    const post = await PublicationRepository.findOne(id);
+    if (!post) {
+      throw new Error('Post not found.');
+    }
+    return PublicationOutputDto.fromEntity(post);
   }
 }

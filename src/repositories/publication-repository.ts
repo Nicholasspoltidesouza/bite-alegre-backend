@@ -32,4 +32,35 @@ export class PublicationRepository {
       },
     });
   }
+  static async findOne(id: string): Promise<
+    | (Publication & {
+        user: { nickname: string };
+        restaurant: {
+          name: string;
+          tags: { tag: { id: string; name: string; type: string } }[];
+        };
+      })
+    | null
+  > {
+    return prisma.publication.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            nickname: true,
+          },
+        },
+        restaurant: {
+          select: {
+            name: true,
+            tags: {
+              include: {
+                tag: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
