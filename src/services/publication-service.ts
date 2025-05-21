@@ -55,6 +55,7 @@ export class PublicationService {
     const entities = await PublicationRepository.findByUser(userId);
     return PublicationListItemDto.fromEntities(entities);
   }
+
   static async getPostById(id: string) {
     const post = await PublicationRepository.findOne(id);
     if (!post) {
