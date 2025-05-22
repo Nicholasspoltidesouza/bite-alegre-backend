@@ -91,6 +91,7 @@ export class RestaurantRepository {
 
   static async findByFilters(
     filters: RestaurantFilterDto,
+    allowedRestaurantIds?: string[],
   ): Promise<Restaurant[]> {
     const where: any = {};
 
@@ -131,6 +132,10 @@ export class RestaurantRepository {
           closesAt: { gte: now },
         },
       };
+    }
+
+    if (allowedRestaurantIds && allowedRestaurantIds.length > 0) {
+      where.id = { in: allowedRestaurantIds };
     }
 
     const allRestaurants = await prisma.restaurant.findMany({

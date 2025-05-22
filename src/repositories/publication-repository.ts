@@ -21,19 +21,7 @@ export class PublicationRepository {
     });
   }
 
-  static async findByUser(userId: string) {
-    return prisma.publication.findMany({
-      where: { user_id: userId },
-      orderBy: { createdAt: 'desc' },
-      include: {
-        restaurant: {
-          select: { name: true, profilePhoto: true },
-        },
-      },
-    });
-  }
-
-  static async findByRestaurant(restaurant_ids: string[], userId: string) {
+  static async findByUser(restaurant_ids: string[], userId: string) {
     return prisma.publication.findMany({
       where: {
         restaurant_id: { in: restaurant_ids },
@@ -49,6 +37,17 @@ export class PublicationRepository {
       },
       orderBy: { createdAt: 'desc' },
     });
+  }
+
+  static async findRestaurants(userId: string): Promise<string[]> {
+    const publications = await prisma.publication.findMany({
+      where: { user_id: userId },
+      select: { restaurant_id: true },
+    });
+    const restaurantIds = Array.from(
+      new Set(publications.map((p) => p.restaurant_id)),
+    );
+    return restaurantIds;
   }
 
   static async findOne(id: string): Promise<

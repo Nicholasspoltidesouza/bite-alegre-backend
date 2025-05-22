@@ -49,23 +49,6 @@ export class PublicationController {
       res.status(500).json({ error: 'Failed to find post' });
     }
   }
-  static async listByUser(req: Request, res: Response) {
-    try {
-      const { userId } = req.params;
-      const data = await PublicationService.listByUser(userId);
-      if (data.length === 0) {
-        res
-          .status(404)
-          .json({ message: 'No publications found for this user' });
-      }
-      res.json(data);
-    } catch (err) {
-      console.error('Error listing publications:', err);
-      res.status(500).json({
-        error: err instanceof Error ? err.message : 'unexpected error',
-      });
-    }
-  }
   static async list(req: Request, res: Response) {
     const filters: RestaurantFilterDto = {
       name: req.query.name?.toString(),
@@ -76,15 +59,17 @@ export class PublicationController {
     };
     try {
       const { userId } = req.params;
-      const data = await PublicationService.getPublications(filters, userId);
+      const data = await PublicationService.listByUser(filters, userId);
       if (data.length === 0) {
         res
           .status(404)
           .json({ message: 'No publications found for this user' });
-      }
-    } catch (error) {
-      console.error('Error fetching posts:', error);
-      res.status(500).json({ error: 'Failed to fetch posts' });
+      } else res.json(data);
+    } catch (err) {
+      console.error('Error listing publications:', err);
+      res.status(500).json({
+        error: err instanceof Error ? err.message : 'unexpected error',
+      });
     }
   }
 }
