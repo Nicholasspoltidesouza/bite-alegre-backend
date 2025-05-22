@@ -52,10 +52,6 @@ export class PublicationService {
 
     return publicationResponseDto.fromEntity(publicationEntity);
   }
-  static async listByUser(userId: string): Promise<PublicationListItemDto[]> {
-    const entities = await PublicationRepository.findByUser(userId);
-    return PublicationListItemDto.fromEntities(entities);
-  }
 
   static async getPostById(id: string) {
     const post = await PublicationRepository.findOne(id);
@@ -65,9 +61,14 @@ export class PublicationService {
     return PublicationOutputDto.fromEntity(post);
   }
 
-  static async getPublications(filters: RestaurantFilterDto, userId: string) {
-    const restaurants = await RestaurantRepository.findByFilters(filters);
-    const posts = await PublicationRepository.findByRestaurant(
+  static async listByUser(filters: RestaurantFilterDto, userId: string) {
+    const restaurantsPosts =
+      await PublicationRepository.findRestaurants(userId);
+    const restaurants = await RestaurantRepository.findByFilters(
+      filters,
+      restaurantsPosts,
+    );
+    const posts = await PublicationRepository.findByUser(
       restaurants.map((r) => r.id),
       userId,
     );
