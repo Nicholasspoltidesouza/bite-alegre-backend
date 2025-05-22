@@ -119,13 +119,15 @@ export class RestaurantRepository {
 
     if (filters.open_now) {
       const now = new Date();
-      const currentDay = now.getDay();
-      const currentTime = now.toTimeString().split(' ')[0];
+
+      const weekdayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+      const currentWeekday = weekdayMap[now.getDay()];
+
       where.openingHours = {
         some: {
-          day: currentDay,
-          open: { lte: currentTime },
-          close: { gte: currentTime },
+          weekday: currentWeekday,
+          opensAt: { lte: now },
+          closesAt: { gte: now },
         },
       };
     }
