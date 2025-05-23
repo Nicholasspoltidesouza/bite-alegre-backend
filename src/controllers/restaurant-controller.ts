@@ -94,8 +94,13 @@ export class RestaurantController {
 
     const filters: RestaurantFilterDto = {
       name: req.query.name?.toString(),
+      address: req.query.address?.toString(),
       geolocation: geo && geo.length === 2 ? [geo[0], geo[1]] : undefined,
-      proximity: req.query.proximity ? Number(req.query.proximity) : undefined,
+      proximity: req.query.proximity
+        ? Number(req.query.proximity)
+        : req.query.address
+          ? 5
+          : undefined,
       price_range: req.query.price_range
         ? Number(req.query.price_range)
         : undefined,
