@@ -35,6 +35,6 @@ export class RestaurantTagService {
 
   static async getByRestaurantId(restaurantId: string) {
     const tags = await RestaurantTagRepository.findByRestaurantId(restaurantId);
-    return tags.map((tag) => tag.tagId);
+    return tags.flatMap((tag) => tag.tag);
   }
 }

@@ -161,17 +161,16 @@ export class RestaurantController {
     const { sub: restaurantId } = (req as AuthenticatedRequest).user;
 
     try {
-      const tag_ids =
-        await RestaurantTagService.getByRestaurantId(restaurantId);
+      const tags = await RestaurantTagService.getByRestaurantId(restaurantId);
 
-      if (!tag_ids.length) {
+      if (!tags.length) {
         res.status(200).json({
           message: 'O restaurante não possui nenhuma tag associada',
-          tag_ids,
+          tags,
         });
       }
 
-      res.status(200).json({ tag_ids });
+      res.status(200).json(tags);
     } catch (error) {
       console.error('Erro ao buscar tags do restaurante:', error);
       res.status(500).json({ error: 'Erro ao buscar tags do restaurante' });

@@ -15,7 +15,7 @@ export class RestaurantTagRepository {
   static async findByRestaurantId(restaurantId: string) {
     return prisma.restaurantTag.findMany({
       where: { restaurantId },
-      select: { tagId: true },
+      select: { tag: true },
     });
   }
 }
