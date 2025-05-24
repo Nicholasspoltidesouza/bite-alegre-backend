@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
+import { RestaurantTagService } from '../services/restaurant-tag-service.js';
 
 export class RestaurantController {
   static async create(req: Request, res: Response) {
@@ -158,6 +159,26 @@ export class RestaurantController {
     } catch (error) {
       console.error('Error finding one restaurant:', error);
       res.status(500).json({ error: 'Failed to find restaurant' });
+    }
+  }
+
+  static async getTags(req: Request, res: Response) {
+    const { sub: restaurantId } = (req as AuthenticatedRequest).user;
+
+    try {
+      const tags = await RestaurantTagService.getByRestaurantId(restaurantId);
+
+      if (!tags.length) {
+        res.status(200).json({
+          message: 'O restaurante não possui nenhuma tag associada',
+          tags,
+        });
+      }
+
+      res.status(200).json(tags);
+    } catch (error) {
+      console.error('Erro ao buscar tags do restaurante:', error);
+      res.status(500).json({ error: 'Erro ao buscar tags do restaurante' });
     }
   }
 }
