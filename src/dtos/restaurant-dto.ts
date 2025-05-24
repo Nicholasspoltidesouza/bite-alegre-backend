@@ -1,4 +1,4 @@
-import { Prisma, Restaurant, Review } from '@prisma/client';
+import { Prisma, Restaurant, Review, OpeningHour } from '@prisma/client';
 
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
@@ -62,10 +62,12 @@ export class RestaurantOutputDto {
   longitude?: number | null;
   averageScore?: number | null;
   reviews?: ReviewOutputDto[];
+  openingPeriods?: OpeningPeriodsDto;
 
   constructor(
-    data: Omit<RestaurantOutputDto, 'reviews'> & {
+    data: Omit<RestaurantOutputDto, 'reviews' | 'openingPeriods'> & {
       reviews?: ReviewOutputDto[];
+      openingPeriods?: OpeningPeriodsDto;
     },
   ) {
     this.id = data.id;
@@ -80,10 +82,14 @@ export class RestaurantOutputDto {
     this.latitude = data.latitude ?? null;
     this.longitude = data.longitude ?? null;
     this.reviews = data.reviews ?? [];
+    this.openingPeriods = data.openingPeriods ?? [];
   }
 
   static fromEntity(
-    entity: Restaurant & { review?: Review[] },
+    entity: Restaurant & {
+      review?: Review[];
+      openingHours?: OpeningHour[]; // Alterado para esperar OpeningHour[] do Prisma
+    },
   ): RestaurantOutputDto {
     const averageScore = entity.review?.length
       ? Number(
@@ -107,6 +113,9 @@ export class RestaurantOutputDto {
       latitude: entity.latitude ?? null,
       longitude: entity.longitude ?? null,
       reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
+      openingPeriods: entity.openingHours
+        ? OpeningPeriodDto.fromEntities(entity.openingHours)
+        : [],
     });
   }
 

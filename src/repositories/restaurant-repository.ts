@@ -42,6 +42,7 @@ export class RestaurantRepository {
       latitude,
       longitude,
       cnpj,
+      openingPeriods,
     } = data;
 
     return prisma.restaurant.create({
@@ -58,6 +59,7 @@ export class RestaurantRepository {
         cnpj,
         latitude: latitude ?? null,
         longitude: longitude ?? null,
+        openingPeriods,
         ...(tagIds && tagIds.length > 0
           ? {
               tags: {
