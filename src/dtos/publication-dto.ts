@@ -1,21 +1,32 @@
 import { Publication } from '@prisma/client';
-import type { Express } from 'express';
 
 export interface publicationRequestDto {
-  media: Express.Multer.File;
+  media: string;
   description: string;
   restaurant_id: string;
 }
 
 export class publicationResponseDto {
+  id: string;
   user_id: string;
+  description: string;
+  restaurant_id: string;
+  url: string;
 
   constructor(data: publicationResponseDto) {
+    this.id = data.id;
     this.user_id = data.user_id;
+    this.description = data.description;
+    this.restaurant_id = data.restaurant_id;
+    this.url = data.url;
   }
   static fromEntity(entity: Publication): publicationResponseDto {
     return new publicationResponseDto({
+      id: entity.id,
       user_id: entity.user_id,
+      description: entity.description,
+      restaurant_id: entity.restaurant_id,
+      url: entity.url,
     });
   }
   static fromEntities(entities: Publication[]): publicationResponseDto[] {

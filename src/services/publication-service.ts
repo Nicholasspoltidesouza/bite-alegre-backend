@@ -38,7 +38,7 @@ export class PublicationService {
     // upload pro S3
     // const url = await uploadMediaToS3(media);
 
-    const url = media.originalname; // Placeholder
+    const url = `https://fake-s3-url.com/media/${Date.now()}.jpg`; // Placeholder
 
     const publicationEntity = await PublicationRepository.create(
       {
