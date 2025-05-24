@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 
+import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { FeedService } from '../services/feed-service.js';
 
 export class FeedController {
   static async restaurantsOnFeed(req: Request, res: Response) {
     try {
-      // const { sub: id } = (req as AuthenticatedRequest).user;
-      const { id } = req.params;
+      const { sub: user_id } = (req as AuthenticatedRequest).user;
       const prox = req.query.proximity as string;
       const proximity = prox ? parseFloat(prox) : undefined;
 
@@ -24,7 +24,7 @@ export class FeedController {
         }
       }
       const restaurants = await FeedService.restaurantsOnFeed(
-        id,
+        user_id,
         latitude,
         longitude,
         proximity,

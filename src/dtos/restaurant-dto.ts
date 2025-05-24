@@ -1,6 +1,6 @@
 import { Prisma, Restaurant, Review } from '@prisma/client';
 
-import { OpeningPeriodsDto } from './opening-hour-dto.js';
+import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
 
 export interface CreateRestaurantDto {
@@ -20,9 +20,29 @@ export interface CreateRestaurantDto {
   openingPeriods?: OpeningPeriodsDto;
 }
 
+export type UpdateOpeningPeriodsDto = {
+  add?: OpeningPeriodsDto;
+  update?: (OpeningPeriodDto & { periodId: string })[];
+  delete?: string[];
+};
+
+export type UpdateRestaurantDto = {
+  restaurantId: string;
+  name?: string;
+  description?: string;
+  address?: string;
+  email?: string;
+  averagePrice?: Prisma.Decimal;
+  phone?: string;
+  profilePhoto?: string;
+  tags?: string[];
+  openingPeriods?: UpdateOpeningPeriodsDto;
+};
+
 export interface RestaurantFilterDto {
   name?: string;
   geolocation?: [number, number];
+  address?: string;
   proximity?: number;
   price_range?: number;
   tags?: string[];
@@ -34,7 +54,6 @@ export class RestaurantOutputDto {
   profilePhoto?: string | null;
   bannerPhoto?: string | null;
   name: string;
-  cnpj: string;
   description?: string | null;
   address: string;
   averagePrice?: string | null;
@@ -53,7 +72,6 @@ export class RestaurantOutputDto {
     this.profilePhoto = data.profilePhoto ?? null;
     this.bannerPhoto = data.bannerPhoto ?? null;
     this.name = data.name;
-    this.cnpj = data.cnpj;
     this.description = data.description ?? null;
     this.address = data.address;
     this.averagePrice = data.averagePrice ?? null;
@@ -81,7 +99,6 @@ export class RestaurantOutputDto {
       profilePhoto: entity.profilePhoto,
       bannerPhoto: entity.bannerPhoto,
       name: entity.name,
-      cnpj: entity.cnpj,
       description: entity.description,
       address: entity.address,
       averagePrice: entity.average_price?.toString() ?? null,
@@ -95,5 +112,53 @@ export class RestaurantOutputDto {
 
   static fromEntities(entities: Restaurant[]): RestaurantOutputDto[] {
     return entities.map(RestaurantOutputDto.fromEntity);
+  }
+}
+export class RestaurantFeedOutputDto {
+  id: string;
+  profilePhoto?: string | null;
+  name: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  averageScore?: number | null;
+  reviews?: ReviewOutputDto[];
+
+  constructor(
+    data: Omit<RestaurantFeedOutputDto, 'reviews'> & {
+      reviews?: ReviewOutputDto[];
+    },
+  ) {
+    this.id = data.id;
+    this.profilePhoto = data.profilePhoto ?? null;
+    this.name = data.name;
+    this.averageScore = data.averageScore ?? null;
+    this.latitude = data.latitude ?? null;
+    this.longitude = data.longitude ?? null;
+  }
+
+  static fromEntity(
+    entity: Restaurant & { review?: Review[] },
+  ): RestaurantFeedOutputDto {
+    const averageScore = entity.review?.length
+      ? Number(
+          (
+            entity.review.reduce((sum, r) => sum + r.stars.toNumber(), 0) /
+            entity.review.length
+          ).toFixed(1),
+        )
+      : null;
+
+    return new RestaurantFeedOutputDto({
+      id: entity.id,
+      profilePhoto: entity.profilePhoto,
+      name: entity.name,
+      averageScore,
+      latitude: entity.latitude ?? null,
+      longitude: entity.longitude ?? null,
+    });
+  }
+
+  static fromEntities(entities: Restaurant[]): RestaurantFeedOutputDto[] {
+    return entities.map(RestaurantFeedOutputDto.fromEntity);
   }
 }

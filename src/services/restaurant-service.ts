@@ -2,6 +2,7 @@ import {
   CreateRestaurantDto,
   RestaurantFilterDto,
   RestaurantOutputDto,
+  UpdateRestaurantDto,
 } from '../dtos/restaurant-dto.js';
 import { UserPreferenceDto } from '../dtos/user-preferences-dto.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
@@ -10,6 +11,7 @@ import { hashPassword } from '../utils/crypto.js';
 import { geocodeAddress } from '../utils/geocoding.js';
 
 import { OpeningHourService } from './opening-hour-service.js';
+import { UserPreferencesService } from './user-preferences-service.js';
 
 export class RestaurantService {
   static async createRestaurant(input: CreateRestaurantDto) {
@@ -47,6 +49,102 @@ export class RestaurantService {
     }
 
     return RestaurantOutputDto.fromEntity(restaurantEntity);
+  }
+
+  static async updateRestaurant({
+    restaurantId,
+    name,
+    description,
+    address,
+    email,
+    averagePrice,
+    phone,
+    profilePhoto,
+    tags,
+    openingPeriods,
+  }: UpdateRestaurantDto): Promise<RestaurantOutputDto | null> {
+    const restaurant = await RestaurantRepository.findOne(restaurantId);
+    if (!restaurant) {
+      return null;
+    }
+
+    const updateData: Partial<CreateRestaurantDto> = {
+      name,
+      description,
+      address,
+      email,
+      averagePrice,
+      phone,
+      profilePhoto,
+    };
+
+    if (address && address !== restaurant.address) {
+      const { lat, lng } = await geocodeAddress(address);
+      updateData.latitude = lat;
+      updateData.longitude = lng;
+    }
+
+    if (tags) {
+      await RestaurantRepository.updateTags(restaurantId, tags);
+    }
+
+    if (openingPeriods) {
+      const { add, update, delete: toDelete } = openingPeriods;
+
+      if (toDelete && toDelete.length) {
+        for (const periodId of toDelete) {
+          await OpeningHourService.deletePeriod(restaurantId, periodId);
+        }
+      }
+
+      if (update && update.length) {
+        for (const item of update) {
+          const { periodId, ...rest } = item;
+          await OpeningHourService.updatePeriod(restaurantId, periodId, rest);
+        }
+      }
+
+      if (add && add.length) {
+        await OpeningHourService.addPeriods(restaurantId, add);
+      }
+    }
+
+    const updatedRestaurant = await RestaurantRepository.update(
+      restaurantId,
+      updateData,
+    );
+
+    return RestaurantOutputDto.fromEntity(updatedRestaurant);
+  }
+
+  static async getRandomRestaurant(
+    userId: string,
+    filters: RestaurantFilterDto,
+  ) {
+    let restaurants;
+
+    const hasFilters = filters.tags || filters.price_range;
+
+    if (hasFilters) {
+      restaurants = await RestaurantRepository.findByTagsOrPriceRange(filters);
+    }
+
+    if (!restaurants || restaurants.length === 0) {
+      const userPreferences = await UserPreferencesService.findByUserId(userId);
+      restaurants =
+        await RestaurantRepository.findByUserPreferences(userPreferences);
+    }
+
+    if (!restaurants || restaurants.length === 0) {
+      throw new Error(
+        'No restaurants found matching the given filters or user preferences.',
+      );
+    }
+
+    const randomIndex = Math.floor(Math.random() * restaurants.length);
+    const randomRestaurant = restaurants[randomIndex];
+
+    return RestaurantOutputDto.fromEntity(randomRestaurant);
   }
 
   static async filterRestaurantListByProximity(

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 
 import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
+import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
+import { RestaurantTagService } from '../services/restaurant-tag-service.js';
 
 export class RestaurantController {
   static async create(req: Request, res: Response) {
@@ -43,13 +45,63 @@ export class RestaurantController {
     }
   }
 
+  static async edit(req: Request, res: Response) {
+    const { sub: restaurantId } = (req as AuthenticatedRequest).user;
+
+    const {
+      profilePhoto,
+      name,
+      description,
+      address,
+      email,
+      averagePrice,
+      phone,
+      openingPeriods,
+      tags,
+    } = req.body;
+
+    try {
+      const updatedRestaurant = await RestaurantService.updateRestaurant({
+        restaurantId,
+        profilePhoto,
+        name,
+        description,
+        address,
+        email,
+        averagePrice,
+        phone,
+        openingPeriods,
+        tags,
+      });
+
+      if (!updatedRestaurant) {
+        res.status(404).json({ error: 'Restaurante não encontrado' });
+      }
+
+      res.status(200).json({
+        message: 'Restaurante atualizado com sucesso',
+        data: updatedRestaurant,
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar restaurante:', error);
+      res
+        .status(500)
+        .json({ error: 'Erro interno ao atualizar o restaurante' });
+    }
+  }
+
   static async list(req: Request, res: Response) {
     const geo = req.query.geolocation?.toString().split(',').map(Number);
 
     const filters: RestaurantFilterDto = {
       name: req.query.name?.toString(),
+      address: req.query.address?.toString(),
       geolocation: geo && geo.length === 2 ? [geo[0], geo[1]] : undefined,
-      proximity: req.query.proximity ? Number(req.query.proximity) : undefined,
+      proximity: req.query.proximity
+        ? Number(req.query.proximity)
+        : req.query.address
+          ? 5
+          : undefined,
       price_range: req.query.price_range
         ? Number(req.query.price_range)
         : undefined,
@@ -79,6 +131,54 @@ export class RestaurantController {
     } catch (error) {
       console.error('Error finding one restaurant:', error);
       res.status(500).json({ error: 'Failed to find restaurant' });
+    }
+  }
+
+  static async randomDraw(req: Request, res: Response) {
+    const { sub: id } = (req as AuthenticatedRequest).user;
+
+    const filters: RestaurantFilterDto = {
+      price_range: req.query.price_range
+        ? Number(req.query.price_range)
+        : undefined,
+      tags: req.query.tags ? req.query.tags.toString().split(',') : undefined,
+    };
+
+    try {
+      const restaurant = await RestaurantService.getRandomRestaurant(
+        id,
+        filters,
+      );
+
+      if (!restaurant) {
+        res.status(404).json({ error: 'Restaurant not found' });
+        return;
+      }
+
+      res.status(200).json(restaurant);
+    } catch (error) {
+      console.error('Error finding one restaurant:', error);
+      res.status(500).json({ error: 'Failed to find restaurant' });
+    }
+  }
+
+  static async getTags(req: Request, res: Response) {
+    const { sub: restaurantId } = (req as AuthenticatedRequest).user;
+
+    try {
+      const tags = await RestaurantTagService.getByRestaurantId(restaurantId);
+
+      if (!tags.length) {
+        res.status(200).json({
+          message: 'O restaurante não possui nenhuma tag associada',
+          tags,
+        });
+      }
+
+      res.status(200).json(tags);
+    } catch (error) {
+      console.error('Erro ao buscar tags do restaurante:', error);
+      res.status(500).json({ error: 'Erro ao buscar tags do restaurante' });
     }
   }
 }

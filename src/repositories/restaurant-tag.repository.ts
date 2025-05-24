@@ -11,4 +11,11 @@ export class RestaurantTagRepository {
       },
     });
   }
+
+  static async findByRestaurantId(restaurantId: string) {
+    return prisma.restaurantTag.findMany({
+      where: { restaurantId },
+      select: { tag: true },
+    });
+  }
 }
