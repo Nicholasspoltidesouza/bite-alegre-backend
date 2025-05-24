@@ -4,6 +4,7 @@ import {
   PublicationListItemDto,
   PublicationOutputDto,
 } from '../dtos/publication-dto.js';
+import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
 import { UserRepository } from '../repositories/user-repository.js';
@@ -51,10 +52,6 @@ export class PublicationService {
 
     return publicationResponseDto.fromEntity(publicationEntity);
   }
-  static async listByUser(userId: string): Promise<PublicationListItemDto[]> {
-    const entities = await PublicationRepository.findByUser(userId);
-    return PublicationListItemDto.fromEntities(entities);
-  }
 
   static async getPostById(id: string) {
     const post = await PublicationRepository.findOne(id);
@@ -62,5 +59,19 @@ export class PublicationService {
       throw new Error('Post not found.');
     }
     return PublicationOutputDto.fromEntity(post);
+  }
+
+  static async listByUser(filters: RestaurantFilterDto, userId: string) {
+    const restaurantsPosts =
+      await PublicationRepository.findRestaurants(userId);
+    const restaurants = await RestaurantRepository.findByFilters(
+      filters,
+      restaurantsPosts,
+    );
+    const posts = await PublicationRepository.findByUser(
+      restaurants.map((r) => r.id),
+      userId,
+    );
+    return PublicationListItemDto.fromEntities(posts);
   }
 }

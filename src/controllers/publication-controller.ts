@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { PublicationService } from '../services/publication-service.js';
 
@@ -48,16 +49,22 @@ export class PublicationController {
       res.status(500).json({ error: 'Failed to find post' });
     }
   }
-  static async listByUser(req: Request, res: Response) {
+  static async list(req: Request, res: Response) {
+    const filters: RestaurantFilterDto = {
+      name: req.query.name?.toString(),
+      price_range: req.query.price_range
+        ? Number(req.query.price_range)
+        : undefined,
+      tags: req.query.tags ? req.query.tags.toString().split(',') : undefined,
+    };
     try {
       const { userId } = req.params;
-      const data = await PublicationService.listByUser(userId);
+      const data = await PublicationService.listByUser(filters, userId);
       if (data.length === 0) {
         res
           .status(404)
           .json({ message: 'No publications found for this user' });
-      }
-      res.json(data);
+      } else res.json(data);
     } catch (err) {
       console.error('Error listing publications:', err);
       res.status(500).json({

@@ -21,17 +21,35 @@ export class PublicationRepository {
     });
   }
 
-  static async findByUser(userId: string) {
+  static async findByUser(restaurant_ids: string[], userId: string) {
     return prisma.publication.findMany({
-      where: { user_id: userId },
-      orderBy: { createdAt: 'desc' },
+      where: {
+        restaurant_id: { in: restaurant_ids },
+        user_id: userId,
+      },
       include: {
         restaurant: {
-          select: { name: true, profilePhoto: true },
+          select: {
+            name: true,
+            profilePhoto: true,
+          },
         },
       },
+      orderBy: { createdAt: 'desc' },
     });
   }
+
+  static async findRestaurants(userId: string): Promise<string[]> {
+    const publications = await prisma.publication.findMany({
+      where: { user_id: userId },
+      select: { restaurant_id: true },
+    });
+    const restaurantIds = Array.from(
+      new Set(publications.map((p) => p.restaurant_id)),
+    );
+    return restaurantIds;
+  }
+
   static async findOne(id: string): Promise<
     | (Publication & {
         user: { nickname: string };
