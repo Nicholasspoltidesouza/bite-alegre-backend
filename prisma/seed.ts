@@ -34,6 +34,7 @@ async function seedUsers() {
       phone: null,
       gender: Gender.FEMININO,
       birthDate: new Date('1992-05-14'),
+      influencer: true,
     },
     {
       profilePhoto:
@@ -46,6 +47,7 @@ async function seedUsers() {
       phone: null,
       gender: Gender.MASCULINO,
       birthDate: new Date('1989-11-22'),
+      influencer: true,
     },
     {
       profilePhoto:
@@ -331,6 +333,70 @@ async function seedCheckins(
   return prisma.checkin.findMany();
 }
 
+async function seedPublications(restaurants: { id: string }[]) {
+  const users = [{ id: 'user-1' }, { id: 'user-2' }];
+
+  const sampleDescriptions = [
+    'Delicioso prato do dia! Venha experimentar.',
+    'Happy Hour com promoções incríveis.',
+    'Novo cardápio disponível. Confira as novidades!',
+    'Evento especial neste final de semana.',
+    'Desconto exclusivo para nossos seguidores!',
+    'Lugar perfeito para aquele date de dia dos namorados!',
+    'Para você sair com sua família.',
+  ];
+  const sampleURL = [
+    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Zm9vZ',
+    'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGZvb2R8ZW58MHx8MHx8fDA%3D',
+    'https://images.unsplash.com/photo-1464226184884-fa280b87c399?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    'https://img.lacadordeofertas.com.br/site/MTA1MDBfL3RtcC9waHBrNDVzUDZfMTUyODIyMTEwMg==.jpg',
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcsNJgHNDqkf35tg5B-fOBsl18fLRwzmhSrg&s',
+    'https://images.unsplash.com/photo-1582182601206-3b5943913295?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudCUyMHBvcnRvJTIwYWxlZ3JlfGVufDB8fDB8fHww',
+    'https://images.unsplash.com/photo-1731939906436-7a7b4d62d711?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cmVzdGF1cmFudCUyMHBvcnRvJTIwYWxlZ3JlfGVufDB8fDB8fHww',
+  ];
+
+  const publicationsData: {
+    user_id: string;
+    restaurant_id: string;
+    description: string;
+    feedback?: string;
+    url: string;
+  }[] = [];
+
+  for (const user of users) {
+    const numPublications = Math.floor(Math.random() * 3) + 2;
+    const shuffledRestaurants = [...restaurants].sort(
+      () => 0.5 - Math.random(),
+    );
+
+    for (
+      let i = 0;
+      i < numPublications && i < shuffledRestaurants.length;
+      i++
+    ) {
+      const restaurant = shuffledRestaurants[i];
+      const description =
+        sampleDescriptions[
+          Math.floor(Math.random() * sampleDescriptions.length)
+        ];
+      const url = sampleURL[Math.floor(Math.random() * sampleURL.length)];
+
+      publicationsData.push({
+        user_id: user.id,
+        restaurant_id: restaurant.id,
+        description,
+        url,
+      });
+    }
+  }
+
+  await prisma.publication.createMany({
+    data: publicationsData,
+  });
+
+  return prisma.publication.findMany();
+}
+
 async function seedReviews(
   checkins: { id: string; user_id: string; restaurant_id: string }[],
 ) {
@@ -379,6 +445,7 @@ async function main() {
   await seedUserPreferences(users, tags);
   const checkins = await seedCheckins(users, restaurants);
   await seedReviews(checkins);
+  await seedPublications(restaurants);
   console.log('✅  Seed finished');
 }
 
