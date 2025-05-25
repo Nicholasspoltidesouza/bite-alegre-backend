@@ -9,16 +9,21 @@ export class PublicationRepository {
     data: Omit<publicationRequestDto, 'media'> & { url: string },
     user_id: string,
   ): Promise<Publication> {
-    const { description, restaurant_id, url } = data;
+    try {
+      const { description, restaurant_id, url } = data;
 
-    return prisma.publication.create({
-      data: {
-        description,
-        restaurant_id,
-        user_id,
-        url,
-      },
-    });
+      return prisma.publication.create({
+        data: {
+          description,
+          restaurant_id,
+          user_id,
+          url,
+        },
+      });
+    } catch (error) {
+      console.error('Erro ao criar publicação:', error);
+      throw new Error('Erro ao criar publicação');
+    }
   }
 
   static async findByUser(restaurant_ids: string[], userId: string) {
