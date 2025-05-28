@@ -7,7 +7,7 @@ import type { Express } from 'express-serve-static-core';
 import { validateEnvVariable } from './validate-env-variable.js';
 
 const s3 = new S3Client({
-  region: validateEnvVariable('AWS_REGION') || 'us-east-1',
+  region: validateEnvVariable('AWS_REGION'),
   credentials: {
     accessKeyId: validateEnvVariable('AWS_ACCESS_KEY_ID'),
     secretAccessKey: validateEnvVariable('AWS_SECRET_ACCESS_KEY'),
@@ -23,7 +23,7 @@ export async function uploadMediaToS3(
   try {
     await s3.send(
       new PutObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET!,
+        Bucket: validateEnvVariable('AWS_S3_BUCKET'),
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
