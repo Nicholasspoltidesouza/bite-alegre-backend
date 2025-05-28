@@ -3,8 +3,12 @@ import {
   publicationResponseDto,
   PublicationListItemDto,
   PublicationOutputDto,
+  PublicationFeedOutputDto,
 } from '../dtos/publication-dto.js';
-import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
+import {
+  RestaurantFeedOutputDto,
+  RestaurantFilterDto,
+} from '../dtos/restaurant-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
 import { UserRepository } from '../repositories/user-repository.js';
@@ -73,5 +77,12 @@ export class PublicationService {
       userId,
     );
     return PublicationListItemDto.fromEntities(posts);
+  }
+
+  static async listByRestaurant(restaurants: RestaurantFeedOutputDto[]) {
+    const posts = await PublicationRepository.findByRestaurants(
+      restaurants.map((r) => r.id),
+    );
+    return PublicationFeedOutputDto.fromEntities(posts);
   }
 }

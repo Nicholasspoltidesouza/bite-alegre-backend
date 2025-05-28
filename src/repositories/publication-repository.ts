@@ -44,6 +44,23 @@ export class PublicationRepository {
     });
   }
 
+  static async findByRestaurants(restaurant_ids: string[]) {
+    return prisma.publication.findMany({
+      where: {
+        restaurant_id: { in: restaurant_ids },
+      },
+      include: {
+        restaurant: {
+          select: {
+            name: true,
+            profilePhoto: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   static async findRestaurants(userId: string): Promise<string[]> {
     const publications = await prisma.publication.findMany({
       where: { user_id: userId },
