@@ -27,10 +27,8 @@ export class PublicationService {
       throw new Error('Restaurante não pode ser vazio!');
     }
 
-    console.log('Buscando restaurante com ID:', restaurant_id);
     const existingRestaurant =
       await RestaurantRepository.findOne(restaurant_id);
-    console.log('Restaurante encontrado:', existingRestaurant ? 'SIM' : 'NÃO');
     if (!existingRestaurant) {
       throw new Error('Restaurante não encontrado!');
     }
