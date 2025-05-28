@@ -16,6 +16,16 @@ export interface CreateUserDto {
   createdAt?: Date;
   tagIds: string[];
 }
+export interface UpdateUserDto {
+  profilePhoto?: string;
+  name: string;
+  nickname: string;
+  email: string;
+  password?: string;
+  phone?: string;
+  birthDate: Date;
+  tagIds: string[];
+}
 
 export class UserSearchOutputDto {
   id: string;
