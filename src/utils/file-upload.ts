@@ -4,11 +4,13 @@ import path from 'node:path';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import type { Express } from 'express-serve-static-core';
 
+import { validateEnvVariable } from './validate-env-variable.js';
+
 const s3 = new S3Client({
-  region: process.env.AWS_REGION || 'us-east-1',
+  region: validateEnvVariable('AWS_REGION') || 'us-east-1',
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: validateEnvVariable('AWS_ACCESS_KEY_ID'),
+    secretAccessKey: validateEnvVariable('AWS_SECRET_ACCESS_KEY'),
   },
 });
 
