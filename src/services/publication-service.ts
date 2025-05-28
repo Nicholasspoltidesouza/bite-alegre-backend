@@ -8,6 +8,7 @@ import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
 import { UserRepository } from '../repositories/user-repository.js';
+import { uploadMediaToS3, getLocalFileUrl } from '../utils/file-upload.js';
 
 export class PublicationService {
   static async create(
@@ -26,8 +27,10 @@ export class PublicationService {
       throw new Error('Restaurante não pode ser vazio!');
     }
 
+    console.log('Buscando restaurante com ID:', restaurant_id);
     const existingRestaurant =
       await RestaurantRepository.findOne(restaurant_id);
+    console.log('Restaurante encontrado:', existingRestaurant ? 'SIM' : 'NÃO');
     if (!existingRestaurant) {
       throw new Error('Restaurante não encontrado!');
     }
@@ -36,14 +39,19 @@ export class PublicationService {
       throw new Error('Usuário não encontrado!');
     }
 
-    // upload pro S3
-    // const url = await uploadMediaToS3(media);
+    let url: string;
 
-    const url = `https://fake-s3-url.com/media/${Date.now()}.jpg`; // Placeholder
+    if (process.env.USE_AWS_S3 === 'true') {
+      // Modo produção - AWS S3
+      url = await uploadMediaToS3(media);
+    } else {
+      // Modo local - para testes
+      url = getLocalFileUrl(media);
+    }
 
     const publicationEntity = await PublicationRepository.create(
       {
-        ...input,
+        description,
         restaurant_id,
         url,
       },
