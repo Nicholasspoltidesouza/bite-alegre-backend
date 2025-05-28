@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { FeedService } from '../services/feed-service.js';
+import { PublicationService } from '../services/publication-service.js';
 
 export class FeedController {
   static async restaurantsOnFeed(req: Request, res: Response) {
@@ -30,7 +31,10 @@ export class FeedController {
         proximity,
       );
 
-      res.status(200).json(restaurants);
+      const publications =
+        await PublicationService.listByRestaurant(restaurants);
+
+      res.status(200).json({ restaurants, publications });
     } catch (error) {
       console.error('Error finding restaurants:', error);
       res.status(500).json({ error: 'Failed to find restaurants' });

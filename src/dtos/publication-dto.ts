@@ -131,3 +131,26 @@ export class PublicationOutputDto {
     return entities.map(PublicationOutputDto.fromEntity);
   }
 }
+
+export class PublicationFeedOutputDto {
+  id: string;
+  url: string;
+
+  constructor(data: { id: string; url: string }) {
+    this.id = data.id;
+    this.url = data.url;
+  }
+
+  static fromEntity(entity: Publication): PublicationFeedOutputDto {
+    return new PublicationFeedOutputDto({
+      id: entity.id,
+      url: entity.url,
+    });
+  }
+
+  static fromEntities(
+    entities: Array<Publication>,
+  ): PublicationFeedOutputDto[] {
+    return entities.map(PublicationFeedOutputDto.fromEntity);
+  }
+}
