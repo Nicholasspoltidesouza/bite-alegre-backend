@@ -37,6 +37,7 @@ model Restaurant {
   description   String?         @db.Text
   tags          RestaurantTag[]
   checkin       Checkin[]
+  favorites     Favorite[]
   latitude      Float?
   longitude     Float?
 
@@ -76,6 +77,7 @@ model User {
   createdAt       DateTime           @default(now())
   userPreferences User_Preferences[]
   checkin         Checkin[]
+  favorites       Favorite[]
   review          Review[]
   publications   Publication[]
 }
@@ -128,6 +130,16 @@ model Checkin {
 
   restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
   User       User?       @relation(fields: [user_id], references: [id])
+}
+
+model Favorite {
+  id            String   @id @default(uuid())
+  user_id       String
+  restaurant_id String
+  time_at       DateTime @default(now())
+
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
+  User       User      @relation(fields: [user_id], references: [id])
 }
 
 model Review {

@@ -3,6 +3,7 @@ import express from 'express';
 
 import authRoutes from './routes/auth-routes.js';
 import checkinRoutes from './routes/checkin-route.js';
+import favoritesRoutes from './routes/favorite-routes.js';
 import feedRoutes from './routes/feed-routes.js';
 import openingHourRoutes from './routes/opening-hour-routes.js';
 import publicationRoutes from './routes/publication-route.js';
@@ -35,6 +36,7 @@ app.use('/api', reviewRoutes);
 app.use('/api', authRoutes);
 app.use('/api', feedRoutes);
 app.use('/api', publicationRoutes);
+app.use('/api', favoritesRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
