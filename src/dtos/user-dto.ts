@@ -1,7 +1,8 @@
-import { Gender, Checkin, Review, User } from '@prisma/client';
+import { Gender, Checkin, Review, User, Restaurant } from '@prisma/client';
 
 import { UserCheckinOutputDto } from './user-checkin-dto.js';
 import { UserReviewOutputDto } from './user-review-dto.js';
+import { RestaurantOutputDto } from './restaurant-dto.js';
 
 export interface CreateUserDto {
   profilePhoto?: string;
@@ -55,6 +56,7 @@ export class UserOutputDto {
   reviews!: UserReviewOutputDto[];
   influencer?: boolean | null;
   checkinsWithoutReview!: UserCheckinOutputDto[];
+  savedRestaurants!: Pick<RestaurantOutputDto, 'name' | 'profilePhoto' | 'averageScore'>[]; 
 
   constructor(data: {
     id: string;
@@ -64,6 +66,7 @@ export class UserOutputDto {
     influencer?: boolean | null;
     reviews: UserReviewOutputDto[];
     checkinsWithoutReview: UserCheckinOutputDto[];
+    savedRestaurants: Pick<RestaurantOutputDto, 'name' | 'profilePhoto' | 'averageScore'>[];
   }) {
     this.id = data.id;
     this.profilePhoto = data.profilePhoto ?? null;
@@ -72,6 +75,7 @@ export class UserOutputDto {
     this.influencer = data.influencer ?? false;
     this.reviews = data.reviews;
     this.checkinsWithoutReview = data.checkinsWithoutReview;
+    this.savedRestaurants = data.savedRestaurants;
   }
 
   static fromEntity(
@@ -82,6 +86,7 @@ export class UserOutputDto {
     checkins: Array<
       Checkin & { restaurant: { name: string; profilePhoto: string | null } }
     >,
+    savedRestaurants: Array<Restaurant & { review?: Review[] }>
   ): UserOutputDto {
     const reviewsDto = UserReviewOutputDto.fromEntities(reviews);
 
@@ -101,6 +106,23 @@ export class UserOutputDto {
 
     const checkinsDto = uniqueCheckins.map(UserCheckinOutputDto.fromEntity);
 
+    const savedRestaurantsDto = savedRestaurants.map((restaurant) => {
+    const averageScore = restaurant.review?.length
+      ? Number(
+          (
+            restaurant.review.reduce((sum, r) => sum + r.stars.toNumber(), 0) /
+            restaurant.review.length
+          ).toFixed(1)
+        )
+      : null;
+
+    return {
+      name: restaurant.name,
+      profilePhoto: restaurant.profilePhoto ?? null,
+      averageScore,
+    };
+  });
+
     return new UserOutputDto({
       id: user.id,
       profilePhoto: user.profilePhoto,
@@ -109,6 +131,7 @@ export class UserOutputDto {
       influencer: user.influencer,
       reviews: reviewsDto,
       checkinsWithoutReview: checkinsDto,
+      savedRestaurants: savedRestaurantsDto,
     });
   }
 
@@ -121,10 +144,11 @@ export class UserOutputDto {
       checkins: Array<
         Checkin & { restaurant: { name: string; profilePhoto: string | null } }
       >;
+      savedRestaurants: Array<Restaurant & { review?: Review[] }>;
     }>,
   ): UserOutputDto[] {
-    return data.map(({ user, reviews, checkins }) =>
-      UserOutputDto.fromEntity(user, reviews, checkins),
+    return data.map(({ user, reviews, checkins, savedRestaurants }) =>
+      UserOutputDto.fromEntity(user, reviews, checkins, savedRestaurants),
     );
   }
 }
