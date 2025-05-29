@@ -7,7 +7,7 @@ export class FavoritesController {
   static async createFavorite(req: Request, res: Response) {
     try {
       const { sub: user_id } = (req as AuthenticatedRequest).user;
-      const { restaurant_id } = req.params;
+      const restaurant_id = req.params.restaurant_id;
 
       const favorite = await FavoriteService.createFavorite({
         user_id,
