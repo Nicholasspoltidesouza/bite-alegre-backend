@@ -22,6 +22,14 @@ export class FavoriteService {
       throw new Error('Usuário não encontrado!');
     }
 
+    const existingFavorite = await FavoriteRepository.findFavorite(
+      user_id,
+      restaurant_id,
+    );
+    if (existingFavorite) {
+      throw new Error('Este restaurante ja foi adicionado aos favoritos!');
+    }
+
     const favorite = await FavoriteRepository.create({
       ...input,
     });
