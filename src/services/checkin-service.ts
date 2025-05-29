@@ -28,4 +28,8 @@ export class CheckinService {
 
     return CheckinOutputDto.fromEntity(checkin);
   }
+
+  static async findByUserId(userId: string) {
+    return CheckinRepository.findByUserId(userId);
+  }
 }

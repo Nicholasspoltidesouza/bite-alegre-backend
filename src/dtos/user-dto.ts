@@ -3,6 +3,7 @@ import { Gender, Checkin, Review, User, Restaurant } from '@prisma/client';
 import { UserCheckinOutputDto } from './user-checkin-dto.js';
 import { UserReviewOutputDto } from './user-review-dto.js';
 import { RestaurantOutputDto } from './restaurant-dto.js';
+import { FavoriteOutputDto } from './favorite-dto.js'; 
 
 export interface CreateUserDto {
   profilePhoto?: string;
@@ -48,6 +49,12 @@ export class UserSearchOutputDto {
   }
 }
 
+export interface SavedRestaurantDto {
+  name: string;
+  profilePhoto: string | null;
+  averageScore: number | null;
+}
+
 export class UserOutputDto {
   id!: string;
   profilePhoto?: string | null;
@@ -56,7 +63,7 @@ export class UserOutputDto {
   reviews!: UserReviewOutputDto[];
   influencer?: boolean | null;
   checkinsWithoutReview!: UserCheckinOutputDto[];
-  savedRestaurants!: Pick<RestaurantOutputDto, 'name' | 'profilePhoto' | 'averageScore'>[]; 
+  savedRestaurants!: SavedRestaurantDto[]; 
 
   constructor(data: {
     id: string;
@@ -66,7 +73,7 @@ export class UserOutputDto {
     influencer?: boolean | null;
     reviews: UserReviewOutputDto[];
     checkinsWithoutReview: UserCheckinOutputDto[];
-    savedRestaurants: Pick<RestaurantOutputDto, 'name' | 'profilePhoto' | 'averageScore'>[];
+    savedRestaurants: SavedRestaurantDto[];
   }) {
     this.id = data.id;
     this.profilePhoto = data.profilePhoto ?? null;
@@ -106,7 +113,7 @@ export class UserOutputDto {
 
     const checkinsDto = uniqueCheckins.map(UserCheckinOutputDto.fromEntity);
 
-    const savedRestaurantsDto = savedRestaurants.map((restaurant) => {
+    const savedRestaurantsDto: SavedRestaurantDto[] = savedRestaurants.map((restaurant) => {
     const averageScore = restaurant.review?.length
       ? Number(
           (

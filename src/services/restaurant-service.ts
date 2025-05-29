@@ -179,4 +179,10 @@ export class RestaurantService {
   static async findByUserPreferences(userPreferences: UserPreferenceDto[]) {
     return RestaurantRepository.findByUserPreferences(userPreferences);
   }
+
+  static async findByIds(ids: string[]): Promise<RestaurantOutputDto[]> {
+    if (ids.length === 0) return [];
+    const restaurants = await RestaurantRepository.findByIdsWithReviews(ids);
+    return restaurants.map(RestaurantOutputDto.fromEntity);
+  }
 }

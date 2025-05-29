@@ -47,4 +47,9 @@ export class ReviewService {
 
     return ReviewOutputDto.fromEntity(review);
   }
+
+  static async findByUserId(userId: string) {
+    const reviews = await ReviewRepository.findByUserId(userId);
+    return reviews;
+  }
 }

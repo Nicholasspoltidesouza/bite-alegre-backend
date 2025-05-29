@@ -3,12 +3,14 @@ import {
   UserOutputDto,
   UserSearchOutputDto,
 } from '../dtos/user-dto.js';
-import { CheckinRepository } from '../repositories/checkin-repository.js';
-import { ReviewRepository } from '../repositories/review-repository.js';
 import { UserRepository } from '../repositories/user-repository.js';
 import { hashPassword } from '../utils/crypto.js';
 
 import { UserPreferencesService } from './user-preferences-service.js';
+import { FavoriteService } from './favorite-service.js';
+import { ReviewService } from './review-service.js';
+import { CheckinService } from './checkin-service.js';
+import { RestaurantService } from './restaurant-service.js';
 
 export class UserService {
   static async createUser(input: CreateUserDto) {
@@ -76,10 +78,16 @@ export class UserService {
     const user = await UserRepository.findOne(id);
     if (!user) throw new Error('User not found.');
 
-    const reviewEntities = await ReviewRepository.findByUserId(id);
+    const reviewEntities = await ReviewService.findByUserId(id);
 
-    const checkinEntities = await CheckinRepository.findByUserId(id);
+    const checkinEntities = await CheckinService.findByUserId(id);
 
-    return UserOutputDto.fromEntity(user, reviewEntities, checkinEntities);
-  }
+    const favorites = await FavoriteService.getFavoritesForUser(id);
+
+    const restaurantIds = favorites.map(fav => fav.restaurant_id);
+
+    const savedRestaurants = await RestaurantService.findByIds(restaurantIds);
+
+    return UserOutputDto.fromEntity(user, reviewEntities, checkinEntities, savedRestaurants);
+    }
 }

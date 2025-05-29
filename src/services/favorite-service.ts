@@ -36,4 +36,9 @@ export class FavoriteService {
 
     return FavoriteOutputDto.fromEntity(favorite);
   }
+
+  static async getFavoritesForUser(userId: string): Promise<FavoriteOutputDto[]> {
+    const favorites = await FavoriteRepository.findByUserId(userId);
+    return FavoriteOutputDto.fromEntities(favorites);
+  }
 }
