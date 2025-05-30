@@ -55,13 +55,13 @@ export class UserController {
         tagIds,
       });
 
-      return res.status(200).json({
+      res.status(200).json({
         message: 'Usuário atualizado com sucesso',
         data: updatedUser,
       });
     } catch (error) {
       console.error('Erro ao atualizar usuário:', error);
-      return res.status(500).json({ error: 'Erro interno ao editar perfil' });
+      res.status(500).json({ error: 'Erro interno ao editar perfil' });
     }
   }
 
