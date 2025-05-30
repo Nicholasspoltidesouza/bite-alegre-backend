@@ -1,5 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
 import {
   CreateUserDto,
   UserOutputDto,
@@ -12,8 +10,6 @@ import { UserRepository } from '../repositories/user-repository.js';
 import { hashPassword } from '../utils/crypto.js';
 
 import { UserPreferencesService } from './user-preferences-service.js';
-
-const prisma = new PrismaClient();
 
 export class UserService {
   static async createUser(input: CreateUserDto) {
@@ -73,17 +69,7 @@ export class UserService {
   }
 
   static async updateUser(userId: string, data: UpdateUserDto) {
-    const updatedUser = await prisma.user.update({
-      where: { id: userId },
-      data: {
-        profilePhoto: data.profilePhoto,
-        name: data.name,
-        nickname: data.nickname,
-        email: data.email,
-        phone: data.phone,
-        birthDate: data.birthDate,
-      },
-    });
+    const updatedUser = await UserRepository.update(userId, data);
 
     if (data.tagIds && data.tagIds.length > 0) {
       await UserRepository.updateTags(userId, data.tagIds);
