@@ -1,5 +1,7 @@
 import { PrismaClient, Gender, User } from '@prisma/client';
 
+import { UpdateUserDto } from '../dtos/user-dto.js';
+
 const prisma = new PrismaClient();
 
 export class UserRepository {
@@ -26,6 +28,35 @@ export class UserRepository {
         birthDate,
         influencer,
       },
+    });
+  }
+
+  static async update(userId: string, data: UpdateUserDto): Promise<User> {
+    return prisma.user.update({
+      where: { id: userId },
+      data: {
+        profilePhoto: data.profilePhoto,
+        name: data.name,
+        nickname: data.nickname,
+        email: data.email,
+        phone: data.phone,
+        birthDate: data.birthDate,
+      },
+    });
+  }
+
+  static async updateTags(userId: string, tagIds: string[]): Promise<void> {
+    await prisma.user_Preferences.deleteMany({
+      where: { user_id: userId },
+    });
+
+    await prisma.user_Preferences.createMany({
+      data: tagIds.map((tagId) => ({
+        user_id: userId,
+        tag_id: tagId,
+        weight: 1,
+      })),
+      skipDuplicates: true,
     });
   }
 

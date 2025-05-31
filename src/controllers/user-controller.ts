@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { UserService } from '../services/user-service.js';
 
 export class UserController {
@@ -37,6 +38,33 @@ export class UserController {
       res.status(500).json({ error: 'Failed to create user' });
     }
   }
+
+  static async update(req: Request, res: Response) {
+    const { sub: userId } = (req as AuthenticatedRequest).user;
+    const { profilePhoto, name, nickname, email, phone, birthDate, tagIds } =
+      req.body;
+
+    try {
+      const updatedUser = await UserService.updateUser(userId, {
+        profilePhoto,
+        name,
+        nickname,
+        email,
+        phone,
+        birthDate,
+        tagIds,
+      });
+
+      res.status(200).json({
+        message: 'Usuário atualizado com sucesso',
+        data: updatedUser,
+      });
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error);
+      res.status(500).json({ error: 'Erro interno ao editar perfil' });
+    }
+  }
+
   static async list(req: Request, res: Response) {
     const nickname = String(req.query.nickname || '');
     try {

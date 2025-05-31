@@ -2,6 +2,7 @@ import {
   CreateUserDto,
   UserOutputDto,
   UserSearchOutputDto,
+  UpdateUserDto,
 } from '../dtos/user-dto.js';
 import { CheckinRepository } from '../repositories/checkin-repository.js';
 import { ReviewRepository } from '../repositories/review-repository.js';
@@ -65,6 +66,16 @@ export class UserService {
       }
     }
     return userCreated;
+  }
+
+  static async updateUser(userId: string, data: UpdateUserDto) {
+    const updatedUser = await UserRepository.update(userId, data);
+
+    if (data.tagIds && data.tagIds.length > 0) {
+      await UserRepository.updateTags(userId, data.tagIds);
+    }
+
+    return updatedUser;
   }
 
   static async filterByUsersByNickname(nickname: string) {
