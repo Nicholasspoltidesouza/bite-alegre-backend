@@ -1,9 +1,8 @@
-import { Gender, Checkin, Review, User, Restaurant } from '@prisma/client';
+import { Gender, Checkin, Review, User } from '@prisma/client';
 
+import { RestaurantOutputDto } from './restaurant-dto.js';
 import { UserCheckinOutputDto } from './user-checkin-dto.js';
 import { UserReviewOutputDto } from './user-review-dto.js';
-import { RestaurantOutputDto } from './restaurant-dto.js';
-import { FavoriteOutputDto } from './favorite-dto.js'; 
 
 export interface CreateUserDto {
   profilePhoto?: string;
@@ -50,7 +49,7 @@ export class UserSearchOutputDto {
 }
 
 export interface SavedRestaurantDto {
-  name: string;
+  restaurantId: string;
   profilePhoto: string | null;
   averageScore: number | null;
 }
@@ -63,7 +62,7 @@ export class UserOutputDto {
   reviews!: UserReviewOutputDto[];
   influencer?: boolean | null;
   checkinsWithoutReview!: UserCheckinOutputDto[];
-  savedRestaurants!: SavedRestaurantDto[]; 
+  savedRestaurants!: SavedRestaurantDto[];
 
   constructor(data: {
     id: string;
@@ -93,7 +92,7 @@ export class UserOutputDto {
     checkins: Array<
       Checkin & { restaurant: { name: string; profilePhoto: string | null } }
     >,
-    savedRestaurants: Array<Restaurant & { review?: Review[] }>
+    savedRestaurantsInput: Array<RestaurantOutputDto>,
   ): UserOutputDto {
     const reviewsDto = UserReviewOutputDto.fromEntities(reviews);
 
@@ -113,22 +112,15 @@ export class UserOutputDto {
 
     const checkinsDto = uniqueCheckins.map(UserCheckinOutputDto.fromEntity);
 
-    const savedRestaurantsDto: SavedRestaurantDto[] = savedRestaurants.map((restaurant) => {
-    const averageScore = restaurant.review?.length
-      ? Number(
-          (
-            restaurant.review.reduce((sum, r) => sum + r.stars.toNumber(), 0) /
-            restaurant.review.length
-          ).toFixed(1)
-        )
-      : null;
-
-    return {
-      name: restaurant.name,
-      profilePhoto: restaurant.profilePhoto ?? null,
-      averageScore,
-    };
-  });
+    const savedRestaurantsDto: SavedRestaurantDto[] = savedRestaurantsInput.map(
+      (restaurantDto) => {
+        return {
+          restaurantId: restaurantDto.id,
+          profilePhoto: restaurantDto.profilePhoto ?? null,
+          averageScore: restaurantDto.averageScore ?? null,
+        };
+      },
+    );
 
     return new UserOutputDto({
       id: user.id,
@@ -151,7 +143,7 @@ export class UserOutputDto {
       checkins: Array<
         Checkin & { restaurant: { name: string; profilePhoto: string | null } }
       >;
-      savedRestaurants: Array<Restaurant & { review?: Review[] }>;
+      savedRestaurants: Array<RestaurantOutputDto>;
     }>,
   ): UserOutputDto[] {
     return data.map(({ user, reviews, checkins, savedRestaurants }) =>

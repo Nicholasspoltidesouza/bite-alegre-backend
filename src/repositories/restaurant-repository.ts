@@ -272,7 +272,7 @@ export class RestaurantRepository {
 
   static async findByIdsWithReviews(ids: string[]) {
     if (ids.length === 0) return [];
-    
+
     return prisma.restaurant.findMany({
       where: { id: { in: ids } },
       include: { review: true },

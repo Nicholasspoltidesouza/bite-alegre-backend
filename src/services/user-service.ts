@@ -6,11 +6,11 @@ import {
 import { UserRepository } from '../repositories/user-repository.js';
 import { hashPassword } from '../utils/crypto.js';
 
-import { UserPreferencesService } from './user-preferences-service.js';
-import { FavoriteService } from './favorite-service.js';
-import { ReviewService } from './review-service.js';
 import { CheckinService } from './checkin-service.js';
+import { FavoriteService } from './favorite-service.js';
 import { RestaurantService } from './restaurant-service.js';
+import { ReviewService } from './review-service.js';
+import { UserPreferencesService } from './user-preferences-service.js';
 
 export class UserService {
   static async createUser(input: CreateUserDto) {
@@ -84,10 +84,16 @@ export class UserService {
 
     const favorites = await FavoriteService.getFavoritesForUser(id);
 
-    const restaurantIds = favorites.map(fav => fav.restaurant_id);
+    const restaurantIds = favorites.map((fav) => fav.restaurant_id);
 
-    const savedRestaurants = await RestaurantService.findByIds(restaurantIds);
+    const savedRestaurants =
+      await RestaurantService.getRestaurantsWithReviewsByIds(restaurantIds);
 
-    return UserOutputDto.fromEntity(user, reviewEntities, checkinEntities, savedRestaurants);
-    }
+    return UserOutputDto.fromEntity(
+      user,
+      reviewEntities,
+      checkinEntities,
+      savedRestaurants,
+    );
+  }
 }
