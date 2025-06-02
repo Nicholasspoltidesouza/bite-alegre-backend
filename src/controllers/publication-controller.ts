@@ -8,11 +8,14 @@ export class PublicationController {
   static async create(req: Request, res: Response) {
     try {
       const { sub: user_id } = (req as AuthenticatedRequest).user;
-      const { description, restaurant_id, media } = req.body;
-      if (!media || typeof media !== 'string' || media.trim().length < 100) {
+      const { description, restaurant_id } = req.body;
+      const media = req.file;
+
+      if (!media) {
         res.status(400).json({ error: 'Mídia não pode ser vazia!' });
         return;
       }
+
       const publication = await PublicationService.create(
         {
           description,
