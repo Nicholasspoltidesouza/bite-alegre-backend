@@ -21,6 +21,7 @@ export class RestaurantController {
         phone,
         tagIds,
         openingPeriods,
+        menuItems,
       } = req.body;
 
       const restaurant = await RestaurantService.createRestaurant({
@@ -36,6 +37,7 @@ export class RestaurantController {
         phone,
         tagIds,
         openingPeriods,
+        menuItems,
       });
 
       res.status(201).json(restaurant);
