@@ -1,6 +1,7 @@
-import { Prisma, Restaurant, Review } from '@prisma/client';
+import { Prisma, Restaurant, Review, Publication } from '@prisma/client';
 
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
+import { PublicationFeedOutputDto } from './publication-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
 
 export interface CreateRestaurantDto {
@@ -62,10 +63,12 @@ export class RestaurantOutputDto {
   longitude?: number | null;
   averageScore?: number | null;
   reviews?: ReviewOutputDto[];
+  publications: PublicationFeedOutputDto[];
 
   constructor(
-    data: Omit<RestaurantOutputDto, 'reviews'> & {
+    data: Omit<RestaurantOutputDto, 'reviews' | 'publications'> & {
       reviews?: ReviewOutputDto[];
+      publications?: PublicationFeedOutputDto[];
     },
   ) {
     this.id = data.id;
@@ -80,10 +83,14 @@ export class RestaurantOutputDto {
     this.latitude = data.latitude ?? null;
     this.longitude = data.longitude ?? null;
     this.reviews = data.reviews ?? [];
+    this.publications = data.publications ?? [];
   }
 
   static fromEntity(
-    entity: Restaurant & { review?: Review[] },
+    entity: Restaurant & {
+      review?: Review[];
+      publications?: Publication[];
+    },
   ): RestaurantOutputDto {
     const averageScore = entity.review?.length
       ? Number(
@@ -107,13 +114,22 @@ export class RestaurantOutputDto {
       latitude: entity.latitude ?? null,
       longitude: entity.longitude ?? null,
       reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
+      publications: entity.publications
+        ? PublicationFeedOutputDto.fromEntities(entity.publications)
+        : [],
     });
   }
 
-  static fromEntities(entities: Restaurant[]): RestaurantOutputDto[] {
+  static fromEntities(
+    entities: (Restaurant & {
+      review?: Review[];
+      publications?: Publication[];
+    })[],
+  ): RestaurantOutputDto[] {
     return entities.map(RestaurantOutputDto.fromEntity);
   }
 }
+
 export class RestaurantFeedOutputDto {
   id: string;
   profilePhoto?: string | null;

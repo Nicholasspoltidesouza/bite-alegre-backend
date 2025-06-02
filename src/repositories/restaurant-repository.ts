@@ -85,6 +85,7 @@ export class RestaurantRepository {
         review: true,
         tags: true,
         openingHours: true,
+        publications: true,
       },
     });
   }
