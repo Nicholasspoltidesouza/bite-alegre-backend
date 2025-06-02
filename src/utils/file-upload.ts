@@ -34,8 +34,8 @@ export async function uploadMediaToS3(
 
     return `https://${validateEnvVariable('AWS_S3_BUCKET')}.s3.amazonaws.com/${key}`;
   } catch (err) {
-    console.error('Falha no upload S3:', err);
-    throw new Error('Falha no upload da mídia');
+    console.error('S3 upload failed:', err);
+    throw new Error('Media upload failed');
   }
 }
 
