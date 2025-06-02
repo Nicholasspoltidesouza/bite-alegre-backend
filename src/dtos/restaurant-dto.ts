@@ -1,6 +1,6 @@
-import { Prisma, Restaurant, Review } from '@prisma/client';
+import { Prisma, Restaurant, Review, RestaurantDish } from '@prisma/client';
 
-import { RestaurantDishesDto } from './dish-dto.js';
+import { RestaurantDishesDto, RestaurantDishesOutputDto } from './dish-dto.js';
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
 
@@ -64,6 +64,7 @@ export class RestaurantOutputDto {
   longitude?: number | null;
   averageScore?: number | null;
   reviews?: ReviewOutputDto[];
+  menuItems?: RestaurantDishesOutputDto[];
 
   constructor(
     data: Omit<RestaurantOutputDto, 'reviews'> & {
@@ -82,10 +83,14 @@ export class RestaurantOutputDto {
     this.latitude = data.latitude ?? null;
     this.longitude = data.longitude ?? null;
     this.reviews = data.reviews ?? [];
+    this.menuItems = data.menuItems ?? [];
   }
 
   static fromEntity(
-    entity: Restaurant & { review?: Review[] },
+    entity: Restaurant & {
+      review?: Review[];
+      restaurantDishes?: RestaurantDish[];
+    },
   ): RestaurantOutputDto {
     const averageScore = entity.review?.length
       ? Number(
@@ -109,6 +114,9 @@ export class RestaurantOutputDto {
       latitude: entity.latitude ?? null,
       longitude: entity.longitude ?? null,
       reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
+      menuItems: entity.restaurantDishes
+        ? RestaurantDishesOutputDto.fromEntities(entity.restaurantDishes)
+        : [],
     });
   }
 
