@@ -9,5 +9,9 @@ router.post(
   '/users/save-restaurant/:restaurant_id',
   FavoritesController.createFavorite,
 );
+router.delete(
+  '/users/save-restaurant/:restaurant_id',
+  FavoritesController.deleteFavorite,
+);
 
 export default router;

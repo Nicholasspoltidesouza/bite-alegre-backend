@@ -25,6 +25,15 @@ export class FavoriteRepository {
       },
     });
   }
+
+  static async delete(favorite_id: string) {
+    prisma.favorite.delete({
+      where: {
+        id: favorite_id,
+      },
+    });
+  }
+
   static async findByUserId(
     userId: string,
   ): Promise<
