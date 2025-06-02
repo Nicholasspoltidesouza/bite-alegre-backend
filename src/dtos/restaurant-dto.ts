@@ -1,6 +1,6 @@
-import { Prisma, Restaurant, Review, Publication } from '@prisma/client';
+import { Prisma, Restaurant, Review, Publication, RestaurantDish } from '@prisma/client';
 
-import { RestaurantDishesDto } from './dish-dto.js';
+import { RestaurantDishesDto, RestaurantDishesOutputDto } from './dish-dto.js';
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
 import { PublicationFeedOutputDto } from './publication-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
@@ -66,6 +66,7 @@ export class RestaurantOutputDto {
   averageScore?: number | null;
   reviews?: ReviewOutputDto[];
   publications: PublicationFeedOutputDto[];
+  menuItems?: RestaurantDishesOutputDto[];
 
   constructor(
     data: Omit<RestaurantOutputDto, 'reviews' | 'publications'> & {
@@ -86,12 +87,14 @@ export class RestaurantOutputDto {
     this.longitude = data.longitude ?? null;
     this.reviews = data.reviews ?? [];
     this.publications = data.publications ?? [];
+    this.menuItems = data.menuItems ?? [];
   }
 
   static fromEntity(
     entity: Restaurant & {
       review?: Review[];
       publications?: Publication[];
+      restaurantDishes?: RestaurantDish[];
     },
   ): RestaurantOutputDto {
     const averageScore = entity.review?.length
@@ -117,7 +120,9 @@ export class RestaurantOutputDto {
       longitude: entity.longitude ?? null,
       reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
       publications: entity.publications
-        ? PublicationFeedOutputDto.fromEntities(entity.publications)
+        ? PublicationFeedOutputDto.fromEntities(entity.publications): [],
+        menuItems: entity.restaurantDishes
+        ? RestaurantDishesOutputDto.fromEntities(entity.restaurantDishes)
         : [],
     });
   }

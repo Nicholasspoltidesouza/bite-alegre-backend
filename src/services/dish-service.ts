@@ -28,7 +28,7 @@ export class DishService {
   ): Promise<RestaurantDishOutputDto[]> {
     const { name, dish_price, dish_photo, main_dish, description } = dto;
 
-    if (!name || !dish_price || dish_photo || description) {
+    if (!name || !dish_price || !dish_photo || !description) {
       throw new Error(
         'name, dish_price, dish_photo and description must be provided',
       );
