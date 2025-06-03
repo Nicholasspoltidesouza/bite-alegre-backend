@@ -1,4 +1,4 @@
-import { PrismaClient, RestaurantDish } from '@prisma/client';
+import { Prisma, PrismaClient, RestaurantDish } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -6,7 +6,7 @@ type Row = {
   id: string;
   restaurant_id: string;
   name: string;
-  dish_price: number;
+  dish_price: Prisma.Decimal;
   dish_photo: string;
   main_dish: boolean;
   description: string;
@@ -23,6 +23,18 @@ export class RestaurantDishRepository {
   ): Promise<RestaurantDish[]> {
     return prisma.restaurantDish.findMany({
       where: { restaurant_id },
+    });
+  }
+
+  static async changeMainDish(restaurantId: string) {
+    await prisma.restaurantDish.updateMany({
+      where: {
+        restaurant_id: restaurantId,
+        main_dish: true,
+      },
+      data: {
+        main_dish: false,
+      },
     });
   }
 }

@@ -1,4 +1,5 @@
 import { Prisma, Restaurant, Review, RestaurantDish } from '@prisma/client';
+import type { Express } from 'express-serve-static-core';
 
 import { RestaurantDishesDto, RestaurantDishesOutputDto } from './dish-dto.js';
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
@@ -20,6 +21,7 @@ export interface CreateRestaurantDto {
   longitude?: number;
   openingPeriods?: OpeningPeriodsDto;
   menuItems?: RestaurantDishesDto;
+  menuMedias?: Express.Multer.File[];
 }
 
 export type UpdateOpeningPeriodsDto = {
@@ -67,8 +69,9 @@ export class RestaurantOutputDto {
   menuItems?: RestaurantDishesOutputDto[];
 
   constructor(
-    data: Omit<RestaurantOutputDto, 'reviews'> & {
+    data: Omit<RestaurantOutputDto, 'reviews' | 'menuItems'> & {
       reviews?: ReviewOutputDto[];
+      menuItems?: RestaurantDishesOutputDto[];
     },
   ) {
     this.id = data.id;
