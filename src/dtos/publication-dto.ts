@@ -88,6 +88,7 @@ export class PublicationOutputDto {
   description: string;
   restaurant_id: string;
   restaurant_name: string;
+  restaurant_photo: string | null;
   restaurant_tags: { id: string; name: string; type: string }[];
 
   constructor(data: PublicationOutputDto) {
@@ -97,6 +98,7 @@ export class PublicationOutputDto {
     this.description = data.description;
     this.restaurant_id = data.restaurant_id;
     this.restaurant_name = data.restaurant_name;
+    this.restaurant_photo = data.restaurant_photo;
     this.restaurant_tags = data.restaurant_tags;
   }
 
@@ -104,6 +106,7 @@ export class PublicationOutputDto {
     entity: Publication & {
       user: { nickname: string };
       restaurant: {
+        profilePhoto: string | null;
         name: string;
         tags: { tag: { id: string; name: string; type: string } }[];
       };
@@ -116,6 +119,7 @@ export class PublicationOutputDto {
       description: entity.description,
       restaurant_id: entity.restaurant_id,
       restaurant_name: entity.restaurant.name,
+      restaurant_photo: entity.restaurant.profilePhoto,
       restaurant_tags: entity.restaurant.tags.map((t) => t.tag),
     });
   }
@@ -124,6 +128,7 @@ export class PublicationOutputDto {
     entities: (Publication & {
       user: { nickname: string };
       restaurant: {
+        profilePhoto: string | null;
         name: string;
         tags: { tag: { id: string; name: string; type: string } }[];
       };
