@@ -21,6 +21,7 @@ export interface CreateRestaurantDto {
   longitude?: number;
   openingPeriods?: OpeningPeriodsDto;
   menuItems?: RestaurantDishesDto;
+  menuMedias?: Express.Multer.File[];
 }
 
 export type UpdateOpeningPeriodsDto = {
@@ -69,9 +70,10 @@ export class RestaurantOutputDto {
   menuItems?: RestaurantDishesOutputDto[];
 
   constructor(
-    data: Omit<RestaurantOutputDto, 'reviews' | 'publications'> & {
+    data: Omit<RestaurantOutputDto, 'reviews' | 'publications' | 'menuItems'> & {
       reviews?: ReviewOutputDto[];
       publications?: PublicationFeedOutputDto[];
+      menuItems?: RestaurantDishesOutputDto[];
     },
   ) {
     this.id = data.id;
