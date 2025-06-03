@@ -44,6 +44,7 @@ model Restaurant {
   review       Review[]
   openingHours OpeningHour[]
   publications   Publication[]
+  restaurantDishes RestaurantDish[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -162,5 +163,17 @@ model Publication {
   createdAt   DateTime @default(now())
 
   user       User       @relation(fields: [user_id], references: [id])
+  restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
+}
+
+model RestaurantDish {
+  id             String   @id @default(uuid())
+  restaurant_id  String
+  name           String
+  dish_price     Decimal
+  dish_photo     String
+  main_dish      Boolean @default(false)
+  description    String
+
   restaurant Restaurant @relation(fields: [restaurant_id], references: [id])
 }

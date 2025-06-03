@@ -74,6 +74,7 @@ export class RestaurantRepository {
       include: {
         tags: true,
         review: true,
+        restaurantDishes: true,
       },
     });
   }
@@ -86,6 +87,7 @@ export class RestaurantRepository {
         tags: true,
         openingHours: true,
         publications: true,
+        restaurantDishes: true,
       },
     });
   }

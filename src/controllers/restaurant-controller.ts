@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import type { Express } from 'express-serve-static-core';
 
+import { RestaurantDishesDto } from '../dtos/dish-dto.js';
 import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
@@ -23,6 +25,14 @@ export class RestaurantController {
         openingPeriods,
       } = req.body;
 
+      let menuItems: RestaurantDishesDto | undefined = undefined;
+
+      if (req.body.menuItems && req.body.menuItems !== 'undefined') {
+        menuItems = JSON.parse(req.body.menuItems);
+      }
+
+      const menuMedias = req.files as Express.Multer.File[];
+
       const restaurant = await RestaurantService.createRestaurant({
         profilePhoto,
         bannerPhoto,
@@ -36,6 +46,8 @@ export class RestaurantController {
         phone,
         tagIds,
         openingPeriods,
+        menuItems,
+        menuMedias,
       });
 
       res.status(201).json(restaurant);

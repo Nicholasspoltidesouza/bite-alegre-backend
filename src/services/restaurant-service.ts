@@ -10,13 +10,23 @@ import { calculateDistance } from '../utils/calculateDistance.js';
 import { hashPassword } from '../utils/crypto.js';
 import { geocodeAddress } from '../utils/geocoding.js';
 
+import { DishService } from './dish-service.js';
 import { OpeningHourService } from './opening-hour-service.js';
 import { UserPreferencesService } from './user-preferences-service.js';
 
 export class RestaurantService {
   static async createRestaurant(input: CreateRestaurantDto) {
-    const { name, cnpj, address, email, password, tagIds, openingPeriods } =
-      input;
+    const {
+      name,
+      cnpj,
+      address,
+      email,
+      password,
+      tagIds,
+      openingPeriods,
+      menuItems,
+      menuMedias,
+    } = input;
 
     if (!name || !cnpj || !address || !email || !password) {
       throw new Error('Required fields: name, cnpj, address, email, password.');
@@ -44,6 +54,15 @@ export class RestaurantService {
       latitude: lat,
       longitude: lng,
     });
+
+    if (menuItems && menuItems.length) {
+      await DishService.addDishes(
+        restaurantEntity.id,
+        menuItems,
+        menuMedias ?? [],
+      );
+    }
+
     if (openingPeriods && openingPeriods.length) {
       await OpeningHourService.addPeriods(restaurantEntity.id, openingPeriods);
     }
