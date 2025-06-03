@@ -20,4 +20,21 @@ export class FavoritesController {
       res.status(500).json({ error: 'Failed to save restaurant' });
     }
   }
+
+  static async deleteFavorite(req: Request, res: Response) {
+    try {
+      const { sub: user_id } = (req as AuthenticatedRequest).user;
+      const restaurant_id = req.params.restaurant_id;
+
+      await FavoriteService.deleteFavorite({
+        user_id,
+        restaurant_id,
+      });
+
+      res.sendStatus(204);
+    } catch (error) {
+      console.error('Error deleting favorite:', error);
+      res.status(500).json({ error: 'Failed to delete favorite' });
+    }
+  }
 }
