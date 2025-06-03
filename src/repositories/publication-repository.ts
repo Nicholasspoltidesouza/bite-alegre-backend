@@ -76,6 +76,7 @@ export class PublicationRepository {
     | (Publication & {
         user: { nickname: string };
         restaurant: {
+          profilePhoto: string | null;
           name: string;
           tags: { tag: { id: string; name: string; type: string } }[];
         };
@@ -92,6 +93,7 @@ export class PublicationRepository {
         },
         restaurant: {
           select: {
+            profilePhoto: true,
             name: true,
             tags: {
               include: {
