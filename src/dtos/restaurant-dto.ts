@@ -1,4 +1,11 @@
-import { Prisma, Restaurant, Review, Publication, RestaurantDish } from '@prisma/client';
+import {
+  Prisma,
+  Restaurant,
+  Review,
+  Publication,
+  RestaurantDish,
+} from '@prisma/client';
+import type { Express } from 'express-serve-static-core';
 
 import { RestaurantDishesDto, RestaurantDishesOutputDto } from './dish-dto.js';
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
@@ -70,7 +77,10 @@ export class RestaurantOutputDto {
   menuItems?: RestaurantDishesOutputDto[];
 
   constructor(
-    data: Omit<RestaurantOutputDto, 'reviews' | 'publications' | 'menuItems'> & {
+    data: Omit<
+      RestaurantOutputDto,
+      'reviews' | 'publications' | 'menuItems'
+    > & {
       reviews?: ReviewOutputDto[];
       publications?: PublicationFeedOutputDto[];
       menuItems?: RestaurantDishesOutputDto[];
@@ -122,8 +132,9 @@ export class RestaurantOutputDto {
       longitude: entity.longitude ?? null,
       reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
       publications: entity.publications
-        ? PublicationFeedOutputDto.fromEntities(entity.publications): [],
-        menuItems: entity.restaurantDishes
+        ? PublicationFeedOutputDto.fromEntities(entity.publications)
+        : [],
+      menuItems: entity.restaurantDishes
         ? RestaurantDishesOutputDto.fromEntities(entity.restaurantDishes)
         : [],
     });
