@@ -1,0 +1,190 @@
+import request from 'supertest';
+import app from '../../../src/index.js';
+import { cleanDatabase } from '../../helpers/test-helpers.js';
+import { createTestUser, createAuthToken } from '../../helpers/auth-helpers.js';
+
+/**
+ * TEMPLATE PARA NOVOS CONTROLLERS
+ * 
+ * 📋 CHECKLIST PARA IMPLEMENTAR UM NOVO CONTROLLER:
+ * 
+ * 1. [ ] Copie este arquivo
+ * 2. [ ] Renomeie para: nome-do-controller.test.ts  
+ * 3. [ ] Atualize o describe principal
+ * 4. [ ] Implemente os testes para cada endpoint
+ * 5. [ ] Execute: npm test para verificar
+ * 6. [ ] Documente casos especiais no README.md
+ * 
+ * 💡 DICAS:
+ * - Use createTestUser() para usuários
+ * - Use createTestRestaurant() para restaurantes  
+ * - Use createAuthToken() para tokens personalizados
+ * - Sempre teste cenários de sucesso E falha
+ * - Mock dependências externas quando necessário
+ */
+
+describe('NOME_DO_CONTROLLER Controller', () => {
+  beforeEach(async () => {
+    await cleanDatabase();
+  });
+
+  describe('GET /api/endpoint', () => {
+    it('should work for public endpoints', async () => {
+      // Arrange: Preparar dados se necessário
+      
+      // Act: Fazer a requisição
+      const response = await request(app)
+        .get('/api/endpoint')
+        .expect(200);
+
+      // Assert: Verificar resposta
+      expect(response.body).toHaveProperty('expectedProperty');
+    });
+
+    it('should require authentication for protected endpoints', async () => {
+      await request(app)
+        .get('/api/protected-endpoint')
+        .expect(401);
+    });
+
+    it('should work with valid authentication', async () => {
+      // Arrange: Criar usuário e token
+      const user = await createTestUser();
+      const token = await createAuthToken(user.id, 'USER');
+
+      // Act: Fazer requisição autenticada
+      const response = await request(app)
+        .get('/api/protected-endpoint')
+        .set('Authorization', `Bearer ${token}`)
+        .expect(200);
+
+      // Assert: Verificar resposta
+      expect(response.body).toBeDefined();
+    });
+  });
+
+  describe('POST /api/endpoint', () => {
+    it('should create resource with valid data', async () => {
+      // Arrange: Preparar autenticação e dados
+      const user = await createTestUser();
+      const token = await createAuthToken(user.id, 'USER');
+      
+      const testData = {
+        field1: 'value1',
+        field2: 'value2'
+      };
+
+      // Act: Criar o recurso
+      const response = await request(app)
+        .post('/api/endpoint')
+        .set('Authorization', `Bearer ${token}`)
+        .send(testData)
+        .expect(201);
+
+      // Assert: Verificar recurso criado
+      expect(response.body).toHaveProperty('id');
+      expect(response.body.field1).toBe(testData.field1);
+    });
+
+    it('should validate required fields', async () => {
+      // Arrange: Preparar autenticação
+      const user = await createTestUser();
+      const token = await createAuthToken(user.id, 'USER');
+
+      // Act & Assert: Testar validação
+      await request(app)
+        .post('/api/endpoint')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ field1: 'missing field2' })
+        .expect(400);
+    });
+  });
+
+  describe('PUT /api/endpoint/:id', () => {
+    it('should update existing resource', async () => {
+      // Arrange: Criar recurso primeiro
+      const user = await createTestUser();
+      const token = await createAuthToken(user.id, 'USER');
+      
+      const createResponse = await request(app)
+        .post('/api/endpoint')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ field1: 'original', field2: 'value' })
+        .expect(201);
+
+      const resourceId = createResponse.body.id;
+      const updateData = { field1: 'updated' };
+
+      // Act: Atualizar o recurso
+      const response = await request(app)
+        .put(`/api/endpoint/${resourceId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .send(updateData)
+        .expect(200);
+
+      // Assert: Verificar atualização
+      expect(response.body.field1).toBe(updateData.field1);
+    });
+  });
+
+  describe('DELETE /api/endpoint/:id', () => {
+    it('should delete existing resource', async () => {
+      // Arrange: Criar recurso primeiro
+      const user = await createTestUser();
+      const token = await createAuthToken(user.id, 'USER');
+      
+      const createResponse = await request(app)
+        .post('/api/endpoint')
+        .set('Authorization', `Bearer ${token}`)
+        .send({ field1: 'to delete', field2: 'value' })
+        .expect(201);
+
+      const resourceId = createResponse.body.id;
+
+      // Act: Deletar o recurso
+      await request(app)
+        .delete(`/api/endpoint/${resourceId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(204);
+
+      // Assert: Verificar que foi deletado
+      await request(app)
+        .get(`/api/endpoint/${resourceId}`)
+        .set('Authorization', `Bearer ${token}`)
+        .expect(404);
+    });
+  });
+});
+
+/**
+ * 🔧 EXEMPLOS DE CASOS ESPECIAIS:
+ * 
+ * 1. TESTE COM ROLES ESPECÍFICOS:
+ * ```typescript
+ * const restaurantUser = await createTestRestaurant();
+ * const token = await createAuthToken(restaurantUser.id, 'RESTAURANT');
+ * ```
+ * 
+ * 2. TESTE COM MOCK DE SERVIÇOS EXTERNOS:
+ * ```typescript
+ * jest.mock('../../../src/services/external-service.js', () => ({
+ *   externalCall: jest.fn().mockResolvedValue({ success: true })
+ * }));
+ * ```
+ * 
+ * 3. TESTE COM MÚLTIPLOS RECURSOS:
+ * ```typescript
+ * const user1 = await createTestUser({ email: 'user1@test.com' });
+ * const user2 = await createTestUser({ email: 'user2@test.com' });
+ * ```
+ * 
+ * 4. TESTE DE PAGINAÇÃO:
+ * ```typescript
+ * const response = await request(app)
+ *   .get('/api/endpoint?page=1&limit=10')
+ *   .expect(200);
+ * 
+ * expect(response.body).toHaveProperty('data');
+ * expect(response.body).toHaveProperty('pagination');
+ * ```
+ */
