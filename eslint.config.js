@@ -52,5 +52,58 @@ export default [
       'prettier/prettier': 'error',
     },
   },
+  {
+    files: ['tests/**/*.ts', '**/*.test.ts', '**/*.spec.ts'],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        global: 'readonly',
+        Buffer: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        test: 'readonly',
+        expect: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        jest: 'readonly',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint,
+      import: importPlugin,
+      prettier: prettierPlugin,
+    },
+    rules: {
+      'no-console': ['warn', { allow: ['warn', 'error', 'info', 'log'] }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      'import/order': [
+        'warn',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+      'prettier/prettier': 'error',
+    },
+  },
   prettier,
 ];
