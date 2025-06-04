@@ -23,7 +23,6 @@ describe('Auth Controller', () => {
         .send({
           email: 'user@test.com',
           password: 'validPassword123',
-          userType: 'USER',
         })
         .expect(200);
 
@@ -42,7 +41,6 @@ describe('Auth Controller', () => {
         .send({
           email: 'restaurant@test.com',
           password: 'validPassword123',
-          userType: 'RESTAURANT',
         })
         .expect(200);
 
@@ -56,7 +54,6 @@ describe('Auth Controller', () => {
         .send({
           email: 'invalid@test.com',
           password: 'wrongPassword',
-          userType: 'USER',
         })
         .expect(401);
 
