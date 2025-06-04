@@ -89,25 +89,3 @@ export async function cleanDatabase() {
 export async function disconnectDatabase() {
   await prisma.$disconnect();
 }
-
-export async function createTestRestaurant(overrides: any = {}) {
-  const defaultData = {
-    name: 'Restaurante Teste',
-    cnpj: '12345678000123',
-    address: 'Rua Teste, 123 - Porto Alegre',
-    email: `test-restaurant-${Date.now()}@test.com`,
-    password: 'password123',
-    phone: '51999999999',
-    profilePhoto: 'https://example.com/photo.jpg',
-    bannerPhoto: 'https://example.com/banner.jpg',
-    description: 'Restaurante para testes de integração',
-    average_price: 50,
-    latitude: -30.0346,
-    longitude: -51.2177,
-    ...overrides,
-  };
-
-  return await prisma.restaurant.create({
-    data: defaultData,
-  });
-}

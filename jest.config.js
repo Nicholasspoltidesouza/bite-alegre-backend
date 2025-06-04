@@ -6,7 +6,15 @@ export default {
   },
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  testMatch: ['**/*.test.ts'],
+  testPathIgnorePatterns: [
+    'templates',
+    'examples',
+    'simple',
+    'template',
+    'fixed',
+    'helper',
+  ],
   transform: {
     '^.+\\.ts$': [
       'ts-jest',
