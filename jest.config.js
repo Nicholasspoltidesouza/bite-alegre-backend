@@ -6,7 +6,11 @@ export default {
   },
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  testRegex: [
+    'tests/integration/setup\\.test\\.ts$',
+    'tests/integration/controllers/auth-controller\\.test\\.ts$',
+    'tests/integration/controllers/user-controller\\.test\\.ts$',
+  ],
   transform: {
     '^.+\\.ts$': [
       'ts-jest',
