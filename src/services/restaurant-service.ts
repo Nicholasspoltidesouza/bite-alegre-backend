@@ -1,4 +1,4 @@
-import { Restaurant, Review } from '@prisma/client';
+import { Restaurant } from '@prisma/client';
 
 import {
   CreateRestaurantDto,
@@ -182,10 +182,13 @@ export class RestaurantService {
     return RestaurantRepository.findByUserPreferences(userPreferences);
   }
 
-  static async getRestaurantsWithReviewsByIds(
+  static async findRestaurantEntitiesByIds(
     ids: string[],
-  ): Promise<Array<Restaurant & { review?: Review[] }>> {
-    if (ids.length === 0) return [];
-    return RestaurantRepository.findByIdsWithReviews(ids);
+  ): Promise<Restaurant[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+    const restaurants = await RestaurantRepository.findByIdsWithReviews(ids);
+    return restaurants;
   }
 }

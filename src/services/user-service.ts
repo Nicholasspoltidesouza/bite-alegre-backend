@@ -86,14 +86,14 @@ export class UserService {
 
     const restaurantIds = favorites.map((fav) => fav.restaurant_id);
 
-    const savedRestaurants =
-      await RestaurantService.getRestaurantsWithReviewsByIds(restaurantIds);
+    const savedRestaurantEntities =
+      await RestaurantService.findRestaurantEntitiesByIds(restaurantIds);
 
     return UserOutputDto.fromEntity(
       user,
       reviewEntities,
       checkinEntities,
-      savedRestaurants,
+      savedRestaurantEntities,
     );
   }
 }
