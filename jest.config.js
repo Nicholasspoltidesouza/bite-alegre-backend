@@ -6,10 +6,14 @@ export default {
   },
   testEnvironment: 'node',
   roots: ['<rootDir>/tests'],
-  testRegex: [
-    'tests/integration/setup\\.test\\.ts$',
-    'tests/integration/controllers/auth-controller\\.test\\.ts$',
-    'tests/integration/controllers/user-controller\\.test\\.ts$',
+  testMatch: ['**/*.test.ts'],
+  testPathIgnorePatterns: [
+    'templates',
+    'examples',
+    'simple',
+    'template',
+    'fixed',
+    'helper',
   ],
   transform: {
     '^.+\\.ts$': [
