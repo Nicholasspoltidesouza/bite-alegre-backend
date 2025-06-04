@@ -10,6 +10,7 @@ export class AuthController {
 
       if (!body.email || !body.password) {
         res.status(400).json({ error: 'email and password required' });
+        return;
       }
 
       const result = await AuthService.login(body);
