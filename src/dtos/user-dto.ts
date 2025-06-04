@@ -62,30 +62,39 @@ export class UserOutputDto {
   profilePhoto?: string | null;
   name!: string;
   nickname!: string;
+  email!: string;
+  phone?: string | null;
   reviews!: UserReviewOutputDto[];
   influencer?: boolean | null;
   checkinsWithoutReview!: UserCheckinOutputDto[];
+  tagIds?: string[];
 
   constructor(data: {
     id: string;
     profilePhoto?: string | null;
     name: string;
     nickname: string;
+    email: string;
+    phone?: string | null;
     influencer?: boolean | null;
     reviews: UserReviewOutputDto[];
     checkinsWithoutReview: UserCheckinOutputDto[];
+    tagIds?: string[];
   }) {
     this.id = data.id;
     this.profilePhoto = data.profilePhoto ?? null;
     this.name = data.name;
     this.nickname = data.nickname;
+    this.email = data.email;
+    this.phone = data.phone ?? null;
     this.influencer = data.influencer ?? false;
     this.reviews = data.reviews;
     this.checkinsWithoutReview = data.checkinsWithoutReview;
+    this.tagIds = data.tagIds ?? [];
   }
 
   static fromEntity(
-    user: User,
+    user: User & { tags?: { id: string }[] },
     reviews: Array<
       Review & { restaurant: { name: string; profilePhoto: string | null } }
     >,
@@ -116,9 +125,12 @@ export class UserOutputDto {
       profilePhoto: user.profilePhoto,
       name: user.name,
       nickname: user.nickname,
+      email: user.email,
+      phone: user.phone,
       influencer: user.influencer,
       reviews: reviewsDto,
       checkinsWithoutReview: checkinsDto,
+      tagIds: user.tags ? user.tags.map((tag: any) => tag.id) : [],
     });
   }
 
