@@ -91,6 +91,11 @@ export class UserService {
 
     const checkinEntities = await CheckinRepository.findByUserId(id);
 
-    return UserOutputDto.fromEntity(user, reviewEntities, checkinEntities);
+    return UserOutputDto.fromEntity(
+      user,
+      reviewEntities,
+      checkinEntities,
+      user.favorites,
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { PrismaClient, Gender, User } from '@prisma/client';
+import { PrismaClient, Gender, User, Prisma } from '@prisma/client';
 
 import { UpdateUserDto } from '../dtos/user-dto.js';
 
@@ -100,7 +100,7 @@ export class UserRepository {
     });
   }
 
-  static async findOne(id: string): Promise<User | null> {
+  static async findOne(id: string): Promise<UserWithDetails | null> {
     return prisma.user.findUnique({
       where: { id },
       include: {
@@ -114,7 +114,37 @@ export class UserRepository {
             restaurant: true,
           },
         },
+        favorites: {
+          include: {
+            restaurant: {
+              select: { id: true, profilePhoto: true, review: true },
+            },
+          },
+        },
       },
     });
   }
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const userWithDetailsArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
+  include: {
+    review: {
+      include: {
+        restaurant: true,
+      },
+    },
+    checkin: {
+      include: {
+        restaurant: true,
+      },
+    },
+    favorites: {
+      include: {
+        restaurant: { select: { id: true, profilePhoto: true, review: true } },
+      },
+    },
+  },
+});
+
+type UserWithDetails = Prisma.UserGetPayload<typeof userWithDetailsArgs>;
