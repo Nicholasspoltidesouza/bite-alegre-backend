@@ -1,4 +1,4 @@
-import { PrismaClient, Restaurant } from '@prisma/client';
+import { PrismaClient, Restaurant, RestaurantDish } from '@prisma/client';
 
 import {
   CreateRestaurantDto,
@@ -270,6 +270,22 @@ export class RestaurantRepository {
         tagId,
       })),
       skipDuplicates: true,
+    });
+  }
+
+  static async deleteDish(dish: RestaurantDish): Promise<void> {
+    await prisma.restaurantDish.delete({
+      where: {
+        id: dish.id,
+      },
+    });
+  }
+
+  static async findDishById(dishId: string) {
+    return prisma.restaurantDish.findUnique({
+      where: {
+        id: dishId,
+      },
     });
   }
 }

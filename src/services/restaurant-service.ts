@@ -198,4 +198,21 @@ export class RestaurantService {
   static async findByUserPreferences(userPreferences: UserPreferenceDto[]) {
     return RestaurantRepository.findByUserPreferences(userPreferences);
   }
+
+  static async deleteDish(restaurantId: string, itemId: string) {
+    const restaurant = await RestaurantRepository.findOne(restaurantId);
+    if (!restaurant) {
+      throw new Error('Restaurant not found.');
+    }
+
+    const dish = await RestaurantRepository.findDishById(itemId);
+    if (!dish) {
+      throw new Error('Menu item not found.');
+    }
+    if (dish.restaurant_id !== restaurantId) {
+      throw new Error('Menu item does not belong to this restaurant.');
+    }
+
+    await RestaurantRepository.deleteDish(dish);
+  }
 }

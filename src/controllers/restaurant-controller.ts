@@ -193,4 +193,19 @@ export class RestaurantController {
       res.status(500).json({ error: 'Erro ao buscar tags do restaurante' });
     }
   }
+
+  static async deleteDish(req: Request, res: Response) {
+    const { sub: restaurantId } = (req as AuthenticatedRequest).user;
+    const { item_id } = req.params;
+    try{
+      await RestaurantService.deleteDish( restaurantId, item_id );
+
+      res.status(200).json({
+        message: 'Item do menu deletado com sucesso',
+      });
+    } catch (error) {
+      console.error('Erro ao deletar o item do menu do restaurante:', error);
+      res.status(500).json({ error: 'Erro ao deletar o item do menu do restaurante' });
+    }
+  }
 }

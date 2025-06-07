@@ -22,5 +22,10 @@ router.post(
 router.get('/restaurants', RestaurantController.list);
 router.get('/restaurants/:id', RestaurantController.find);
 router.get('/restaurants-tags', authenticate, RestaurantController.getTags);
+router.delete(
+  '/restaurants/menu-items/:item_id',
+  authenticate,
+  RestaurantController.deleteDish,
+);
 
 export default router;
