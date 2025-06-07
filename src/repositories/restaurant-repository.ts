@@ -276,18 +276,16 @@ export class RestaurantRepository {
   static async deleteDish(dish: RestaurantDish): Promise<void> {
     await prisma.restaurantDish.delete({
       where: {
-        id: dish.id
+        id: dish.id,
       },
     });
   }
 
-  static async findDishById(dishId: string, restaurant_id: string){
+  static async findDishById(dishId: string) {
     return prisma.restaurantDish.findUnique({
-      where: { 
+      where: {
         id: dishId,
-        restaurant_id: restaurant_id,
-       }
+      },
     });
   }
-    
 }
