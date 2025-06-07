@@ -32,3 +32,19 @@ export class FavoriteOutputDto {
     return entities.map(FavoriteOutputDto.fromEntity);
   }
 }
+
+export class SavedRestaurantOutputDto {
+  restaurantId: string;
+  profilePhoto?: string | null;
+  averageScore?: number | null;
+
+  constructor(data: {
+    restaurantId: string;
+    profilePhoto?: string | null;
+    averageScore?: number | null;
+  }) {
+    this.restaurantId = data.restaurantId;
+    this.profilePhoto = data.profilePhoto ?? null;
+    this.averageScore = data.averageScore ?? null;
+  }
+}
