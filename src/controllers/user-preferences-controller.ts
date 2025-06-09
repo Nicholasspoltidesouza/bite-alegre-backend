@@ -67,7 +67,7 @@ export class UserPreferencesController {
       console.error('Erro ao aumentar peso da preferência do usuário:', error);
       res
         .status(500)
-        .json({ error: 'Erro ao ao aumendar peso da preferência do usuário' });
+        .json({ error: 'Erro ao ao aumentar peso da preferência do usuário' });
     }
   }
 }
