@@ -37,4 +37,21 @@ export class RestaurantDishRepository {
       },
     });
   }
+
+  static async update(id: string, data: Partial<Row>): Promise<void> {
+    await prisma.restaurantDish.update({
+      where: { id },
+      data,
+    });
+  }
+
+  static async deleteMany(ids: string[]): Promise<void> {
+    if (!ids.length) return;
+
+    await prisma.restaurantDish.deleteMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+  }
 }

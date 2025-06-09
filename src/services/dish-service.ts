@@ -7,6 +7,7 @@ import {
   RestaurantDishDto,
   RestaurantDishesDto,
   RestaurantDishOutputDto,
+  UpdateDishDto,
 } from '../dtos/dish-dto.js';
 import { RestaurantDishRepository } from '../repositories/dish-repository.js';
 import { getLocalFileUrl, uploadMediaToS3 } from '../utils/file-upload.js';
@@ -79,6 +80,69 @@ export class DishService {
     const stored =
       await RestaurantDishRepository.listByRestaurant(restaurant_id);
     return stored.filter((r) => r.id === id).map(this.toDto);
+  }
+
+  static async syncDishes(
+    restaurantId: string,
+    updatedDishes: UpdateDishDto[],
+    menuMedias: Express.Multer.File[],
+  ): Promise<RestaurantDishOutputDto[]> {
+    const existing =
+      await RestaurantDishRepository.listByRestaurant(restaurantId);
+
+    const updatedDishIds = updatedDishes.filter((d) => d.id).map((d) => d.id);
+    const existingIds = existing.map((d) => d.id);
+
+    const toDelete = existingIds.filter((id) => !updatedDishIds.includes(id));
+    if (toDelete.length) {
+      await RestaurantDishRepository.deleteMany(toDelete);
+    }
+
+    const created: RestaurantDishOutputDto[] = [];
+    const updated: RestaurantDishOutputDto[] = [];
+
+    let mediaIndex = 0;
+
+    for (const dish of updatedDishes) {
+      if (dish.description.length > 25) {
+        throw new Error(`Description too long: ${dish.description}`);
+      }
+
+      let dish_photo: string | undefined;
+
+      if (dish.photo && menuMedias.length > mediaIndex) {
+        const media = menuMedias[mediaIndex++];
+        dish_photo =
+          process.env.USE_AWS_S3 === 'true'
+            ? await uploadMediaToS3(media)
+            : getLocalFileUrl(media);
+      }
+
+      if (dish.id && existingIds.includes(dish.id)) {
+        await RestaurantDishRepository.update(dish.id, {
+          name: dish.name,
+          dish_price: new Prisma.Decimal(dish.dish_price),
+          description: dish.description,
+          main_dish: dish.main_dish ?? false,
+          dish_photo,
+        });
+        updated.push({
+          ...dish,
+          id: dish.id,
+          restaurant_id: restaurantId,
+          dish_photo:
+            dish_photo || existing.find((d) => d.id === dish.id)?.dish_photo!,
+        });
+      } else {
+        const newDish = await this.addDish(restaurantId, {
+          ...dish,
+          media: menuMedias[mediaIndex++],
+        });
+        created.push(...newDish);
+      }
+    }
+
+    return [...updated, ...created];
   }
 
   private static toDto(row: {

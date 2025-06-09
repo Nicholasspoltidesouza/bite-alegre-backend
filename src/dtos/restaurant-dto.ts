@@ -48,6 +48,8 @@ export type UpdateRestaurantDto = {
   profilePhoto?: string;
   tags?: string[];
   openingPeriods?: UpdateOpeningPeriodsDto;
+  menuItems?: RestaurantDishesDto;
+  menuMedias?: Express.Multer.File[];
 };
 
 export interface RestaurantFilterDto {
