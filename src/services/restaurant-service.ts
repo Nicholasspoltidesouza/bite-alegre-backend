@@ -81,11 +81,11 @@ export class RestaurantService {
     profilePhoto,
     tags,
     openingPeriods,
+    menuItems,
+    menuMedias,
   }: UpdateRestaurantDto): Promise<RestaurantOutputDto | null> {
     const restaurant = await RestaurantRepository.findOne(restaurantId);
-    if (!restaurant) {
-      return null;
-    }
+    if (!restaurant) return null;
 
     const updateData: Partial<CreateRestaurantDto> = {
       name,
@@ -110,22 +110,26 @@ export class RestaurantService {
     if (openingPeriods) {
       const { add, update, delete: toDelete } = openingPeriods;
 
-      if (toDelete && toDelete.length) {
+      if (toDelete?.length) {
         for (const periodId of toDelete) {
           await OpeningHourService.deletePeriod(restaurantId, periodId);
         }
       }
 
-      if (update && update.length) {
+      if (update?.length) {
         for (const item of update) {
           const { periodId, ...rest } = item;
           await OpeningHourService.updatePeriod(restaurantId, periodId, rest);
         }
       }
 
-      if (add && add.length) {
+      if (add?.length) {
         await OpeningHourService.addPeriods(restaurantId, add);
       }
+    }
+
+    if (menuItems) {
+      await DishService.syncDishes(restaurantId, menuItems, menuMedias ?? []);
     }
 
     const updatedRestaurant = await RestaurantRepository.update(

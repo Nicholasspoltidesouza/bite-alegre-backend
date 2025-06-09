@@ -273,6 +273,27 @@ export class RestaurantRepository {
     });
   }
 
+  static async deleteDishesFromRestaurant(restaurantId: string): Promise<void> {
+    await prisma.restaurantDish.deleteMany({
+      where: {
+        restaurant_id: restaurantId,
+      },
+    });
+  }
+
+  static async createDish(data: {
+    restaurant_id: string;
+    name: string;
+    dish_price: number;
+    dish_photo: string;
+    main_dish: boolean;
+    description: string;
+  }): Promise<void> {
+    await prisma.restaurantDish.create({
+      data,
+    });
+  }
+
   static async deleteDish(dish: RestaurantDish): Promise<void> {
     await prisma.restaurantDish.delete({
       where: {

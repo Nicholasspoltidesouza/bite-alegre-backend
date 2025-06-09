@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import type { Express } from 'express-serve-static-core';
 
-import { RestaurantDishesDto } from '../dtos/dish-dto.js';
+import { RestaurantDishDto, RestaurantDishesDto } from '../dtos/dish-dto.js';
 import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
@@ -73,6 +73,15 @@ export class RestaurantController {
     } = req.body;
 
     try {
+      let menuItems: RestaurantDishDto[] | undefined = undefined;
+
+      if (req.body.menuItems && req.body.menuItems !== 'undefined') {
+        menuItems = JSON.parse(req.body.menuItems);
+      }
+
+      const files = req.files as { [field: string]: Express.Multer.File[] };
+      const menuMedias = files?.menuMedias ?? [];
+
       const updatedRestaurant = await RestaurantService.updateRestaurant({
         restaurantId,
         profilePhoto,
@@ -84,6 +93,8 @@ export class RestaurantController {
         phone,
         openingPeriods,
         tags,
+        menuItems,
+        menuMedias,
       });
 
       if (!updatedRestaurant) {
@@ -197,15 +208,17 @@ export class RestaurantController {
   static async deleteDish(req: Request, res: Response) {
     const { sub: restaurantId } = (req as AuthenticatedRequest).user;
     const { item_id } = req.params;
-    try{
-      await RestaurantService.deleteDish( restaurantId, item_id );
+    try {
+      await RestaurantService.deleteDish(restaurantId, item_id);
 
       res.status(200).json({
         message: 'Item do menu deletado com sucesso',
       });
     } catch (error) {
       console.error('Erro ao deletar o item do menu do restaurante:', error);
-      res.status(500).json({ error: 'Erro ao deletar o item do menu do restaurante' });
+      res
+        .status(500)
+        .json({ error: 'Erro ao deletar o item do menu do restaurante' });
     }
   }
 }

@@ -21,6 +21,15 @@ export interface RestaurantDishOutputDto {
   description: string;
 }
 
+export interface UpdateDishDto {
+  id?: string;
+  name: string;
+  dish_price: number;
+  description: string;
+  main_dish?: boolean;
+  photo?: string;
+}
+
 export class RestaurantDishesOutputDto {
   id: string;
   dish_photo: string;
