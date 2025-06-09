@@ -1,10 +1,39 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User_Preferences } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 export class UserPreferencesRepository {
-  static async getUserPreferencesById(user_id: string) {
+  static async getUserPreferencesByUserId(user_id: string) {
     return prisma.user_Preferences.findMany({ where: { user_id } });
+  }
+
+  static async findUserPreferencesById(id: string) {
+    return prisma.user_Preferences.findUnique({
+      where: { id },
+    });
+  }
+
+  static async deleteUserPreference(
+    UserPreference: User_Preferences,
+  ): Promise<void> {
+    await prisma.user_Preferences.delete({
+      where: {
+        id: UserPreference.id,
+      },
+    });
+  }
+
+  static async addWeigh(UserPreference: User_Preferences): Promise<void> {
+    await prisma.user_Preferences.update({
+      where: {
+        id: UserPreference.id,
+      },
+      data: {
+        weight: {
+          increment: 1,
+        },
+      },
+    });
   }
 
   static async create(user_id: string, tag_id: string, weight: number) {

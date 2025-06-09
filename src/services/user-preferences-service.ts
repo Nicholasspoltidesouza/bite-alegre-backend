@@ -10,7 +10,7 @@ export class UserPreferencesService {
     if (!userExists) throw new Error(`No user found with Id: ${user_id}`);
 
     const userPreferences =
-      await UserPreferencesRepository.getUserPreferencesById(user_id);
+      await UserPreferencesRepository.getUserPreferencesByUserId(user_id);
 
     if (userPreferences !== null) {
       return userPreferences;
@@ -69,5 +69,33 @@ export class UserPreferencesService {
     const userPreferences =
       await UserPreferencesRepository.findRestaurantsByUserPreferences(id);
     return UserPreferenceDto.fromEntities(userPreferences);
+  }
+
+  static async deletePreference(user_id: string, user_preference_id: string) {
+    const userPreference =
+      await UserPreferencesRepository.findUserPreferencesById(
+        user_preference_id,
+      );
+    if (!userPreference) {
+      throw new Error('UserPreference not found.');
+    }
+    if (userPreference.user_id !== user_id) {
+      throw new Error('User Preference does not belong to this user.');
+    }
+    await UserPreferencesRepository.deleteUserPreference(userPreference);
+  }
+
+  static async addWeigh(user_id: string, user_preference_id: string) {
+    const userPreference =
+      await UserPreferencesRepository.findUserPreferencesById(
+        user_preference_id,
+      );
+    if (!userPreference) {
+      throw new Error('UserPreference not found.');
+    }
+    if (userPreference.user_id !== user_id) {
+      throw new Error('User Preference does not belong to this user.');
+    }
+    await UserPreferencesRepository.addWeigh(userPreference);
   }
 }
