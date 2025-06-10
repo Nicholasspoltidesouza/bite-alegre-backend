@@ -150,9 +150,7 @@ export class RestaurantController {
   static async find(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      console.log('Finding restaurant with ID:', id);
       const userId = extractUserIdIfAuthenticated(req);
-      console.log('User ID:', userId);
       const restaurant = await RestaurantService.getRestaurantById(id, userId);
 
       if (!restaurant) {
