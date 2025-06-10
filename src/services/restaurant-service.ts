@@ -11,6 +11,7 @@ import { hashPassword } from '../utils/crypto.js';
 import { geocodeAddress } from '../utils/geocoding.js';
 
 import { DishService } from './dish-service.js';
+import { FavoriteService } from './favorite-service.js';
 import { OpeningHourService } from './opening-hour-service.js';
 import { UserPreferencesService } from './user-preferences-service.js';
 
@@ -167,7 +168,10 @@ export class RestaurantService {
     const randomIndex = Math.floor(Math.random() * restaurants.length);
     const randomRestaurant = restaurants[randomIndex];
 
-    return RestaurantOutputDto.fromEntity(randomRestaurant);
+    const favoriteIds = await FavoriteService.getUserFavoriteIds(userId);
+    const isFavorite = favoriteIds.includes(randomRestaurant.id);
+
+    return RestaurantOutputDto.fromEntity(randomRestaurant, isFavorite);
   }
 
   static async filterRestaurantListByProximity(
@@ -186,17 +190,30 @@ export class RestaurantService {
     return [];
   }
 
-  static async getRestaurants(filters: RestaurantFilterDto) {
+  static async getRestaurants(filters: RestaurantFilterDto, userId?: string) {
     const restaurants = await RestaurantRepository.findByFilters(filters);
-    return RestaurantOutputDto.fromEntities(restaurants);
+
+    let favoriteRestaurantIds: string[] | undefined;
+    if (userId) {
+      favoriteRestaurantIds = await FavoriteService.getUserFavoriteIds(userId);
+    }
+
+    return RestaurantOutputDto.fromEntities(restaurants, favoriteRestaurantIds);
   }
 
-  static async getRestaurantById(id: string) {
+  static async getRestaurantById(id: string, userId?: string) {
     const restaurant = await RestaurantRepository.findOne(id);
     if (!restaurant) {
       throw new Error('Restaurant not found.');
     }
-    return RestaurantOutputDto.fromEntity(restaurant);
+
+    let isFavorite: boolean | undefined;
+    if (userId) {
+      const favoriteIds = await FavoriteService.getUserFavoriteIds(userId);
+      isFavorite = favoriteIds.includes(id);
+    }
+
+    return RestaurantOutputDto.fromEntity(restaurant, isFavorite);
   }
 
   static async findByUserPreferences(userPreferences: UserPreferenceDto[]) {
