@@ -24,8 +24,8 @@ router.post(
   upload.array('menuMedias'),
   RestaurantController.create,
 );
-router.get('/restaurants', RestaurantController.list);
-router.get('/restaurants/:id', RestaurantController.find);
+router.get('/restaurants', authenticate, RestaurantController.list);
+router.get('/restaurants/:id', authenticate, RestaurantController.find);
 router.get('/restaurants-tags', authenticate, RestaurantController.getTags);
 router.delete(
   '/restaurants/menu-items/:item_id',

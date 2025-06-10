@@ -65,4 +65,9 @@ export class FavoriteService {
 
     await FavoriteRepository.delete(existingFavorite.id);
   }
+
+  static async getUserFavoriteIds(userId: string): Promise<string[]> {
+    const favorites = await FavoriteRepository.findByUserId(userId);
+    return favorites.map((fav) => fav.restaurant_id);
+  }
 }

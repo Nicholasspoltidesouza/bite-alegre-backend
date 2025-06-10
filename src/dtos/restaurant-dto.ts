@@ -74,6 +74,7 @@ export class RestaurantOutputDto {
   latitude?: number | null;
   longitude?: number | null;
   averageScore?: number | null;
+  isFavorite?: boolean;
   reviews?: ReviewOutputDto[];
   publications: PublicationFeedOutputDto[];
   menuItems?: RestaurantDishesOutputDto[];
@@ -99,6 +100,7 @@ export class RestaurantOutputDto {
     this.phone = data.phone;
     this.latitude = data.latitude ?? null;
     this.longitude = data.longitude ?? null;
+    this.isFavorite = data.isFavorite;
     this.reviews = data.reviews ?? [];
     this.publications = data.publications ?? [];
     this.menuItems = data.menuItems ?? [];
@@ -110,6 +112,7 @@ export class RestaurantOutputDto {
       publications?: Publication[];
       restaurantDishes?: RestaurantDish[];
     },
+    isFavorite?: boolean,
   ): RestaurantOutputDto {
     const averageScore = entity.review?.length
       ? Number(
@@ -132,6 +135,7 @@ export class RestaurantOutputDto {
       phone: entity.phone,
       latitude: entity.latitude ?? null,
       longitude: entity.longitude ?? null,
+      isFavorite,
       reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
       publications: entity.publications
         ? PublicationFeedOutputDto.fromEntities(entity.publications)
@@ -147,8 +151,14 @@ export class RestaurantOutputDto {
       review?: Review[];
       publications?: Publication[];
     })[],
+    favoriteRestaurantIds?: string[],
   ): RestaurantOutputDto[] {
-    return entities.map(RestaurantOutputDto.fromEntity);
+    return entities.map((entity) =>
+      RestaurantOutputDto.fromEntity(
+        entity,
+        favoriteRestaurantIds?.includes(entity.id),
+      ),
+    );
   }
 }
 
