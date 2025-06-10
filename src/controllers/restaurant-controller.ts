@@ -6,6 +6,7 @@ import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
 import { RestaurantTagService } from '../services/restaurant-tag-service.js';
+import { extractUserIdIfAuthenticated } from '../utils/auth-helpers.js';
 
 export class RestaurantController {
   static async create(req: Request, res: Response) {
@@ -133,7 +134,12 @@ export class RestaurantController {
     };
 
     try {
-      const restaurants = await RestaurantService.getRestaurants(filters);
+      const userId = extractUserIdIfAuthenticated(req);
+
+      const restaurants = await RestaurantService.getRestaurants(
+        filters,
+        userId,
+      );
       res.status(200).json(restaurants);
     } catch (error) {
       console.error('Error fetching restaurants:', error);
@@ -144,10 +150,14 @@ export class RestaurantController {
   static async find(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const restaurant = await RestaurantService.getRestaurantById(id);
+      console.log('Finding restaurant with ID:', id);
+      const userId = extractUserIdIfAuthenticated(req);
+      console.log('User ID:', userId);
+      const restaurant = await RestaurantService.getRestaurantById(id, userId);
 
       if (!restaurant) {
         res.status(404).json({ error: 'Restaurant not found' });
+        return;
       }
 
       res.status(200).json(restaurant);
