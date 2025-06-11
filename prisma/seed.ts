@@ -567,6 +567,30 @@ async function seedReviews(
   await prisma.review.createMany({ data: reviewsData, skipDuplicates: true });
 }
 
+async function seedFavorites(
+  users: { id: string }[],
+  restaurants: { id: string }[],
+) {
+  const favorites: { user_id: string; restaurant_id: string; time_at: Date }[] =
+    [];
+
+  for (const u of users) {
+    const chosen = restaurants.sort(() => 0.5 - Math.random()).slice(0, 3);
+    for (const r of chosen) {
+      favorites.push({
+        user_id: u.id,
+        restaurant_id: r.id,
+        time_at: new Date(),
+      });
+    }
+  }
+
+  await prisma.favorite.createMany({
+    data: favorites,
+    skipDuplicates: true,
+  });
+}
+
 async function main() {
   console.log('🌱  Seeding database…');
   const tags = await seedTags();
@@ -576,6 +600,7 @@ async function main() {
   const checkins = await seedCheckins(users, restaurants);
   await seedReviews(checkins);
   await seedPublications(restaurants);
+  await seedFavorites(users, restaurants);
   console.log('✅  Seed finished');
 }
 
