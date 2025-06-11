@@ -11,11 +11,28 @@ async function seedTags() {
   await prisma.tag.createMany({
     skipDuplicates: true,
     data: [
-      { name: 'Centro', type: TagType.LOCAL },
-      { name: 'Zona Sul', type: TagType.LOCAL },
+      { name: 'Restaurante', type: TagType.LOCAL },
+      { name: 'Bar', type: TagType.LOCAL },
+      { name: 'Pastelaria', type: TagType.LOCAL },
+      { name: 'Boteco', type: TagType.LOCAL },
+      { name: 'Pub temático', type: TagType.LOCAL },
+      { name: 'Café colonial', type: TagType.LOCAL },
       { name: 'Hambúrguer', type: TagType.CATEGORIA },
+      { name: 'Rodízio', type: TagType.CATEGORIA },
+      { name: 'Buffet Livre', type: TagType.CATEGORIA },
+      { name: 'Massas', type: TagType.CATEGORIA },
+      { name: 'Japones', type: TagType.CATEGORIA },
+      { name: 'Churrasco', type: TagType.CATEGORIA },
+      { name: 'Vegetariano', type: TagType.CATEGORIA },
+      { name: 'Vegano', type: TagType.CATEGORIA },
       { name: 'Pizza', type: TagType.CATEGORIA },
-      { name: 'Pet-friendly', type: TagType.OCASIAO },
+      { name: 'Amigos', type: TagType.OCASIAO },
+      { name: 'Date', type: TagType.OCASIAO },
+      { name: 'Família', type: TagType.OCASIAO },
+      { name: 'Café', type: TagType.OCASIAO },
+      { name: 'Almoço', type: TagType.OCASIAO },
+      { name: 'Janta', type: TagType.OCASIAO },
+      { name: 'Lanche', type: TagType.OCASIAO },
     ],
   });
   return prisma.tag.findMany();
@@ -184,6 +201,34 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.038390655384863,
       longitude: -51.18821504472203,
       description: 'Autêntica pizzaria italiana com forno a lenha.',
+      dishes: [
+        {
+          name: 'Pizza Margherita',
+          dish_price: new Prisma.Decimal(45.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: true,
+          description:
+            'Molho de tomate, mussarela, manjericão e azeite de oliva.',
+        },
+        {
+          name: 'Pizza Calabresa',
+          dish_price: new Prisma.Decimal(50.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1628840042765-356cda07504e?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: false,
+          description:
+            'Calabresa fatiada, cebola roxa, molho de tomate e queijo.',
+        },
+        {
+          name: 'Pizza 4 Queijos',
+          dish_price: new Prisma.Decimal(50.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1662805524663-7851d77cc133?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: false,
+          description: 'Pizza com quatro tipos de queijo e molho de tomate.',
+        },
+      ],
     },
     {
       profilePhoto:
@@ -199,6 +244,26 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.020163952610563,
       longitude: -51.202484304272005,
       description: 'Hambúrguer artesanal com carne angus e pão brioche.',
+      dishes: [
+        {
+          name: 'Le Grand Angus',
+          dish_price: new Prisma.Decimal(42.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1550547660-d9450f859349',
+          main_dish: true,
+          description:
+            'Hambúrguer de carne Angus 180g com queijo emmental, cebola caramelizada e maionese da casa.',
+        },
+        {
+          name: 'Burger Veggie',
+          dish_price: new Prisma.Decimal(38.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=2072&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: false,
+          description:
+            'Hambúrguer vegetariano com falafel, tahine e rúcula no pão de beterraba.',
+        },
+      ],
     },
     {
       profilePhoto:
@@ -214,6 +279,26 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.031380551062014,
       longitude: -51.211654773584264,
       description: 'Restaurante vegetariano com pratos criativos.',
+      dishes: [
+        {
+          name: 'Estrogonofe de Grão-de-Bico',
+          dish_price: new Prisma.Decimal(29.9),
+          dish_photo:
+            'https://images.unsplash.com/photo-1609595781576-1580ff3ee291?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: true,
+          description:
+            'Grão-de-bico cozido em creme de castanha com cogumelos, servido com arroz integral e batata palha.',
+        },
+        {
+          name: 'Salada Thai Vegana',
+          dish_price: new Prisma.Decimal(25.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1643310765760-ac258fad80a8?q=80&w=1976&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: false,
+          description:
+            'Mix de folhas, cenoura, pepino, amendoim e molho agridoce à base de tamarindo.',
+        },
+      ],
     },
     {
       profilePhoto:
@@ -229,6 +314,26 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.029031211895866,
       longitude: -51.18181966009222,
       description: 'Sushi bar moderno com rodízio e opções à la carte.',
+      dishes: [
+        {
+          name: 'Combinado Takêdo (30 peças)',
+          dish_price: new Prisma.Decimal(98.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1607886098701-91274ad78cf9?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: true,
+          description:
+            'Seleção de sushis e sashimis variados com salmão, atum, peixe branco e uramakis.',
+        },
+        {
+          name: 'Temaki de Salmão com Cebolinha',
+          dish_price: new Prisma.Decimal(28.0),
+          dish_photo:
+            'https://plus.unsplash.com/premium_photo-1668146932065-d08643791942?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: false,
+          description:
+            'Cone de alga recheado com salmão fresco, cebolinha e gergelim.',
+        },
+      ],
     },
     {
       profilePhoto:
@@ -244,6 +349,25 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.0405049355526,
       longitude: -51.192216017763535,
       description: 'Churrasco tradicional com variedade de cortes premium.',
+      dishes: [
+        {
+          name: 'Picanha na Brasa',
+          dish_price: new Prisma.Decimal(89.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1565299715199-866c917206bb?q=80&w=1980&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: true,
+          description: 'Fatiada ao ponto, acompanhada de farofa, vinagrete.',
+        },
+        {
+          name: 'Buffet de Saladas',
+          dish_price: new Prisma.Decimal(32.0),
+          dish_photo:
+            'https://images.unsplash.com/photo-1720443000468-89d509202615?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          main_dish: false,
+          description:
+            'Buffet livre de saladas variadas e acompanhamentos frescos.',
+        },
+      ],
     },
   ];
 
@@ -276,6 +400,9 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
         openingHours: makeHours(),
         tags: {
           create: subset.map((t) => ({ tagId: t.id })),
+        },
+        restaurantDishes: {
+          create: r.dishes,
         },
       },
       update: {},
@@ -411,6 +538,9 @@ async function seedReviews(
     'O ambiente é barulhento, mas a comida compensa.',
     'Faltou opções no cardápio.',
     'Voltarei com certeza!',
+    'Muito bom.',
+    'Meu restaurante preferido.',
+    'Meh.',
   ];
 
   const reviewsData: {
