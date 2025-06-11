@@ -45,19 +45,39 @@ export class UserRepository {
     });
   }
 
-  static async updateTags(userId: string, tagIds: string[]): Promise<void> {
-    await prisma.user_Preferences.deleteMany({
+  static async updateTags(userId: string, newTagIds: string[]): Promise<void> {
+    const existingPrefs = await prisma.user_Preferences.findMany({
       where: { user_id: userId },
+      select: { id: true, tag_id: true },
     });
 
-    await prisma.user_Preferences.createMany({
-      data: tagIds.map((tagId) => ({
-        user_id: userId,
-        tag_id: tagId,
-        weight: 1,
-      })),
-      skipDuplicates: true,
-    });
+    const existingTagIds = new Set(existingPrefs.map((pref) => pref.tag_id));
+    const newTagIdSet = new Set(newTagIds);
+    const tagsToAdd = newTagIds.filter((tagId) => !existingTagIds.has(tagId));
+
+    const tagsToRemove = existingPrefs
+      .filter((pref) => !newTagIdSet.has(pref.tag_id))
+      .map((pref) => pref.tag_id);
+
+    if (tagsToAdd.length > 0) {
+      await prisma.user_Preferences.createMany({
+        data: tagsToAdd.map((tagId) => ({
+          user_id: userId,
+          tag_id: tagId,
+          weight: 1,
+        })),
+        skipDuplicates: true,
+      });
+    }
+
+    if (tagsToRemove.length > 0) {
+      await prisma.user_Preferences.deleteMany({
+        where: {
+          user_id: userId,
+          tag_id: { in: tagsToRemove },
+        },
+      });
+    }
   }
 
   static async getAllowedGenders() {
