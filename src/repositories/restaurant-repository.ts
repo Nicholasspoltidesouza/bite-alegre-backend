@@ -73,17 +73,29 @@ export class RestaurantRepository {
     return prisma.restaurant.findMany({
       include: {
         tags: true,
-        review: true,
+        review: {
+          include: {
+            user: {
+              select: { name: true, profilePhoto: true },
+            },
+          },
+        },
         restaurantDishes: true,
       },
     });
   }
 
-  static async findOne(id: string): Promise<Restaurant | null> {
+  static async findOne(id: string) {
     return prisma.restaurant.findUnique({
       where: { id },
       include: {
-        review: true,
+        review: {
+          include: {
+            user: {
+              select: { name: true, profilePhoto: true },
+            },
+          },
+        },
         tags: true,
         openingHours: true,
         publications: true,
@@ -145,7 +157,13 @@ export class RestaurantRepository {
       where,
       include: {
         tags: true,
-        review: true,
+        review: {
+          include: {
+            user: {
+              select: { name: true, profilePhoto: true },
+            },
+          },
+        },
       },
     });
 
@@ -186,13 +204,22 @@ export class RestaurantRepository {
           },
         },
       },
-      include: { tags: true },
+      include: {
+        tags: true,
+        review: {
+          include: {
+            user: {
+              select: { name: true, profilePhoto: true },
+            },
+          },
+        },
+      },
     });
   }
 
   static async findByTagsOrPriceRange(
     filters: Pick<RestaurantFilterDto, 'tags' | 'price_range'>,
-  ): Promise<Restaurant[]> {
+  ) {
     const conditions: any[] = [];
 
     if (filters.price_range !== undefined) {
@@ -224,7 +251,13 @@ export class RestaurantRepository {
       where,
       include: {
         tags: true,
-        review: true,
+        review: {
+          include: {
+            user: {
+              select: { name: true, profilePhoto: true },
+            },
+          },
+        },
       },
     });
   }

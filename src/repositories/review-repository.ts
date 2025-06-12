@@ -5,15 +5,18 @@ import { CreateReviewDto } from '../dtos/review-dto.js';
 const prisma = new PrismaClient();
 
 export class ReviewRepository {
-  static async create(data: CreateReviewDto): Promise<Review> {
-    const { user_id, restaurant_id, feedback, stars } = data;
-
+  static async create(data: CreateReviewDto) {
     return prisma.review.create({
       data: {
-        user_id,
-        restaurant_id,
-        feedback,
-        stars,
+        user_id: data.user_id,
+        restaurant_id: data.restaurant_id,
+        feedback: data.feedback,
+        stars: data.stars,
+      },
+      include: {
+        user: {
+          select: { name: true, profilePhoto: true },
+        },
       },
     });
   }
@@ -26,15 +29,14 @@ export class ReviewRepository {
     });
   }
 
-  static async findByUserId(
-    userId: string,
-  ): Promise<
-    (Review & { restaurant: { name: string; profilePhoto: string | null } })[]
-  > {
+  static async findByUserId(userId: string) {
     return prisma.review.findMany({
       where: { user_id: userId },
       include: {
         restaurant: {
+          select: { name: true, profilePhoto: true },
+        },
+        user: {
           select: { name: true, profilePhoto: true },
         },
       },
