@@ -33,7 +33,7 @@ export class FeedService {
       .map((restaurant) => {
         let score = 0;
 
-        restaurant.tags.forEach((tag: any) => {
+        restaurant.tags.forEach((tag: Tag) => {
           const weight = preferenceMap.get(tag.tagId);
           if (weight) {
             score += weight;
