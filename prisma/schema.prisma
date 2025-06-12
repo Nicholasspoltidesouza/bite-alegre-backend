@@ -149,6 +149,7 @@ model Review {
   restaurant_id String
   feedback      String?
   stars         Decimal
+  createdAt     DateTime @default(now())
 
   user       User       @relation(fields: [user_id], references: [id])
   restaurant Restaurant @relation(fields: [restaurant_id], references: [id])

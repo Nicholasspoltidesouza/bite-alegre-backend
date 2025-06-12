@@ -1,4 +1,4 @@
-import { Gender, Checkin, Review, User } from '@prisma/client';
+import { Gender, Checkin, User, Review } from '@prisma/client';
 
 import { SavedRestaurantOutputDto } from './favorite-dto.js';
 import { UserCheckinOutputDto } from './user-checkin-dto.js';
@@ -90,15 +90,23 @@ export class UserOutputDto {
 
   static fromEntity(
     user: User,
+    favorites: Array<{
+      restaurant: {
+        id: string;
+        profilePhoto: string | null;
+        review: Review[];
+      };
+    }>,
     reviews: Array<
-      Review & { restaurant: { name: string; profilePhoto: string | null } }
+      Review & {
+        restaurant: { name: string; profilePhoto: string | null };
+      }
     >,
     checkins: Array<
-      Checkin & { restaurant: { name: string; profilePhoto: string | null } }
+      Checkin & {
+        restaurant: { name: string; profilePhoto: string | null };
+      }
     >,
-    favorites: Array<{
-      restaurant: { id: string; profilePhoto: string | null; review: Review[] };
-    }>,
   ): UserOutputDto {
     const reviewsDto = UserReviewOutputDto.fromEntities(reviews);
 
@@ -123,7 +131,7 @@ export class UserOutputDto {
         ? Number(
             (
               fav.restaurant.review.reduce(
-                (sum, r) => sum + r.stars.toNumber(),
+                (sum: number, r: Review) => sum + r.stars.toNumber(),
                 0,
               ) / fav.restaurant.review.length
             ).toFixed(1),
@@ -148,24 +156,7 @@ export class UserOutputDto {
     });
   }
 
-  static fromEntities(
-    data: Array<{
-      user: User;
-      reviews: Array<
-        Review & { restaurant: { name: string; profilePhoto: string | null } }
-      >;
-      checkins: Array<
-        Checkin & { restaurant: { name: string; profilePhoto: string | null } }
-      >;
-      favorites: Array<{
-        restaurant: {
-          id: string;
-          profilePhoto: string | null;
-          review: Review[];
-        };
-      }>;
-    }>,
-  ): UserOutputDto[] {
+  static fromEntities(data: any[]): UserOutputDto[] {
     return data.map(({ user, reviews, checkins, favorites }) =>
       UserOutputDto.fromEntity(user, reviews, checkins, favorites),
     );

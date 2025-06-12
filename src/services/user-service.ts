@@ -93,9 +93,9 @@ export class UserService {
 
     return UserOutputDto.fromEntity(
       user,
+      user.favorites,
       reviewEntities,
       checkinEntities,
-      user.favorites,
     );
   }
 }
