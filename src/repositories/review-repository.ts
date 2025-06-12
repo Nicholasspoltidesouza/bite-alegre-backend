@@ -13,11 +13,6 @@ export class ReviewRepository {
         feedback: data.feedback,
         stars: data.stars,
       },
-      include: {
-        user: {
-          select: { name: true, profilePhoto: true },
-        },
-      },
     });
   }
 
