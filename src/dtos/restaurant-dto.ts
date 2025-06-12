@@ -10,6 +10,7 @@ import type { Express } from 'express-serve-static-core';
 import { RestaurantDishesDto, RestaurantDishesOutputDto } from './dish-dto.js';
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
 import { PublicationFeedOutputDto } from './publication-dto.js';
+import { RestaurantReviewOutputDto } from './restaurant-review-dto.js';
 import { ReviewOutputDto } from './review-dto.js';
 
 export interface CreateRestaurantDto {
@@ -75,7 +76,7 @@ export class RestaurantOutputDto {
   longitude?: number | null;
   averageScore?: number | null;
   isFavorite?: boolean;
-  reviews?: ReviewOutputDto[];
+  reviews?: RestaurantReviewOutputDto[];
   publications: PublicationFeedOutputDto[];
   menuItems?: RestaurantDishesOutputDto[];
 
@@ -84,7 +85,7 @@ export class RestaurantOutputDto {
       RestaurantOutputDto,
       'reviews' | 'publications' | 'menuItems'
     > & {
-      reviews?: ReviewOutputDto[];
+      reviews?: RestaurantReviewOutputDto[];
       publications?: PublicationFeedOutputDto[];
       menuItems?: RestaurantDishesOutputDto[];
     },
@@ -108,7 +109,9 @@ export class RestaurantOutputDto {
 
   static fromEntity(
     entity: Restaurant & {
-      review?: Review[];
+      review?: Array<
+        Review & { user: { name: string; profilePhoto: string | null } }
+      >;
       publications?: Publication[];
       restaurantDishes?: RestaurantDish[];
     },
@@ -136,7 +139,9 @@ export class RestaurantOutputDto {
       latitude: entity.latitude ?? null,
       longitude: entity.longitude ?? null,
       isFavorite,
-      reviews: entity.review ? ReviewOutputDto.fromEntities(entity.review) : [],
+      reviews: entity.review
+        ? RestaurantReviewOutputDto.fromEntities(entity.review)
+        : [],
       publications: entity.publications
         ? PublicationFeedOutputDto.fromEntities(entity.publications)
         : [],
@@ -148,7 +153,9 @@ export class RestaurantOutputDto {
 
   static fromEntities(
     entities: (Restaurant & {
-      review?: Review[];
+      review?: Array<
+        Review & { user: { name: string; profilePhoto: string | null } }
+      >;
       publications?: Publication[];
     })[],
     favoriteRestaurantIds?: string[],
