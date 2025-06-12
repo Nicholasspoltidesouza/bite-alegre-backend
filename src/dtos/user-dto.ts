@@ -1,4 +1,4 @@
-import { Gender, Checkin, User } from '@prisma/client';
+import { Gender, Checkin, User, Review } from '@prisma/client';
 
 import { SavedRestaurantOutputDto } from './favorite-dto.js';
 import { UserCheckinOutputDto } from './user-checkin-dto.js';
@@ -90,9 +90,23 @@ export class UserOutputDto {
 
   static fromEntity(
     user: User,
-    favorites: any[],
-    reviews: any[],
-    checkins: any[],
+    favorites: Array<{
+      restaurant: {
+        id: string;
+        profilePhoto: string | null;
+        review: Review[];
+      };
+    }>,
+    reviews: Array<
+      Review & {
+        restaurant: { name: string; profilePhoto: string | null };
+      }
+    >,
+    checkins: Array<
+      Checkin & {
+        restaurant: { name: string; profilePhoto: string | null };
+      }
+    >,
   ): UserOutputDto {
     const reviewsDto = UserReviewOutputDto.fromEntities(reviews);
 

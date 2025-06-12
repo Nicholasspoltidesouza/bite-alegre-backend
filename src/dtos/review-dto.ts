@@ -27,7 +27,7 @@ export class ReviewOutputDto {
   static fromEntity(entity: Review): ReviewOutputDto {
     return new ReviewOutputDto({
       id: entity.id,
-      stars: entity.stars.toString(),
+      stars: entity.stars.toNumber().toString(),
       restaurant_id: entity.restaurant_id,
       feedback: entity.feedback,
       createdAt: entity.createdAt,
