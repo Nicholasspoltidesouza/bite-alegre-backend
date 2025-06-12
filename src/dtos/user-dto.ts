@@ -131,7 +131,7 @@ export class UserOutputDto {
         ? Number(
             (
               fav.restaurant.review.reduce(
-                (sum: number, r: any) => sum + r.stars.toNumber(),
+                (sum: number, r: Review) => sum + r.stars.toNumber(),
                 0,
               ) / fav.restaurant.review.length
             ).toFixed(1),
