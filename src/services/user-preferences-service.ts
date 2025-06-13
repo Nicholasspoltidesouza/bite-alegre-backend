@@ -85,17 +85,13 @@ export class UserPreferencesService {
     await UserPreferencesRepository.deleteUserPreference(userPreference);
   }
 
-  static async addWeigh(user_id: string, user_preference_id: string) {
-    const userPreference =
-      await UserPreferencesRepository.findUserPreferencesById(
-        user_preference_id,
-      );
+  static async addWeigh(user_id: string, tag_id: string) {
+    const userPreference = await UserPreferencesRepository.findUserPreferences(
+      tag_id,
+      user_id,
+    );
     if (!userPreference) {
-      throw new Error('UserPreference not found.');
-    }
-    if (userPreference.user_id !== user_id) {
-      throw new Error('User Preference does not belong to this user.');
-    }
-    await UserPreferencesRepository.addWeigh(userPreference);
+      await UserPreferencesRepository.create(user_id, tag_id, 1);
+    } else await UserPreferencesRepository.addWeigh(userPreference);
   }
 }
