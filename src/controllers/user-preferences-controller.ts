@@ -56,9 +56,9 @@ export class UserPreferencesController {
 
   static async addWeigh(req: Request, res: Response) {
     const { sub: user_id } = (req as AuthenticatedRequest).user;
-    const { user_preference_id } = req.params;
+    const { tag_id } = req.params;
     try {
-      await UserPreferencesService.addWeigh(user_id, user_preference_id);
+      await UserPreferencesService.addWeigh(user_id, tag_id);
 
       res.status(200).json({
         message: 'Peso da preferência incrementado',

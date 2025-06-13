@@ -13,6 +13,10 @@ export class UserPreferencesRepository {
     });
   }
 
+  static async findUserPreferences(tag_id: string, user_id: string) {
+    return prisma.user_Preferences.findFirst({ where: { tag_id, user_id } });
+  }
+
   static async deleteUserPreference(
     UserPreference: User_Preferences,
   ): Promise<void> {

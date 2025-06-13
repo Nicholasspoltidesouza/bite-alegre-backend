@@ -105,6 +105,8 @@ model User_Preferences {
   weight  Int    @default(1)
   user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   tag     Tag    @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, tag_id])
 }
 
 enum TagType {

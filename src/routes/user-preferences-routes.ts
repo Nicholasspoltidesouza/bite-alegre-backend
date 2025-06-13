@@ -15,7 +15,7 @@ router.delete(
   UserPreferencesController.deletePreference,
 );
 router.patch(
-  '/user_preferences/add_weigh/:user_preference_id',
+  '/user_preferences/add_weigh/:tag_id',
   authenticate,
   UserPreferencesController.addWeigh,
 );
