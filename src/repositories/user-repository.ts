@@ -120,6 +120,21 @@ export class UserRepository {
     });
   }
 
+  static async findOneBasic(id: string): Promise<PartialUserForEdit | null> {
+    return prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        profilePhoto: true,
+        name: true,
+        nickname: true,
+        email: true,
+        phone: true,
+        influencer: true,
+      },
+    });
+  }
+
   static async findOne(id: string): Promise<UserWithDetails | null> {
     return prisma.user.findUnique({
       where: { id },
@@ -166,5 +181,15 @@ const userWithDetailsArgs = Prisma.validator<Prisma.UserDefaultArgs>()({
     },
   },
 });
+
+type PartialUserForEdit = {
+  id: string;
+  profilePhoto: string | null;
+  name: string;
+  nickname: string;
+  email: string;
+  phone: string | null;
+  influencer: boolean | null;
+};
 
 type UserWithDetails = Prisma.UserGetPayload<typeof userWithDetailsArgs>;

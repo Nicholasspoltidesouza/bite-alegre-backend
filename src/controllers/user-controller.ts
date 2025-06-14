@@ -94,4 +94,20 @@ export class UserController {
       res.status(500).json({ error: 'Failed to find user' });
     }
   }
+
+  static async editUser(req: Request, res: Response) {
+    try {
+      const { sub: id } = (req as AuthenticatedRequest).user;
+      const user = await UserService.findUserParameters(id);
+
+      if (!user) {
+        res.status(404).json({ error: 'User not found' });
+      }
+
+      res.status(200).json(user);
+    } catch (error) {
+      console.error('Error finding one user:', error);
+      res.status(500).json({ error: 'Failed to find user' });
+    }
+  }
 }
