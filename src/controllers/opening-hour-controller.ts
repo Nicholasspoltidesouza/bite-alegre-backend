@@ -27,8 +27,8 @@ export class OpeningHourController {
 
   static async list(req: Request, res: Response) {
     try {
-      const { rid } = req.params;
-      const hours = await OpeningHourService.listByRestaurant(rid);
+      const { restId } = req.params;
+      const hours = await OpeningHourService.listByRestaurant(restId);
       res.status(200).json(hours);
     } catch (err) {
       console.error(err);
