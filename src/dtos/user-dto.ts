@@ -162,3 +162,47 @@ export class UserOutputDto {
     );
   }
 }
+
+export class UserEditOutputDto {
+  id: string;
+  profilePhoto?: string | null;
+  name: string;
+  nickname: string;
+  email: string;
+  phone?: string | null;
+  influencer?: boolean | null;
+
+  constructor(data: UserEditOutputDto) {
+    this.id = data.id;
+    this.profilePhoto = data.profilePhoto ?? null;
+    this.name = data.name;
+    this.nickname = data.nickname;
+    this.email = data.email;
+    this.phone = data.phone ?? null;
+    this.influencer = data.influencer ?? false;
+  }
+
+  static fromEntity(entity: {
+    id: string;
+    profilePhoto?: string | null;
+    name: string;
+    nickname: string;
+    email: string;
+    phone?: string | null;
+    influencer?: boolean | null;
+  }): UserEditOutputDto {
+    return new UserEditOutputDto({
+      id: entity.id,
+      profilePhoto: entity.profilePhoto,
+      name: entity.name,
+      nickname: entity.nickname,
+      email: entity.email,
+      phone: entity.phone,
+      influencer: entity.influencer ?? false,
+    });
+  }
+
+  static fromEntities(entities: User[]): UserEditOutputDto[] {
+    return entities.map(UserEditOutputDto.fromEntity);
+  }
+}

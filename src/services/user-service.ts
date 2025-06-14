@@ -3,6 +3,7 @@ import {
   UserOutputDto,
   UserSearchOutputDto,
   UpdateUserDto,
+  UserEditOutputDto,
 } from '../dtos/user-dto.js';
 import { CheckinRepository } from '../repositories/checkin-repository.js';
 import { ReviewRepository } from '../repositories/review-repository.js';
@@ -97,5 +98,12 @@ export class UserService {
       reviewEntities,
       checkinEntities,
     );
+  }
+
+  static async findUserParameters(id: string): Promise<UserEditOutputDto> {
+    console.log('Buscando usuário com ID:', id);
+    const user = await UserRepository.findOneBasic(id);
+    if (!user) throw new Error('User not found' + id);
+    return UserEditOutputDto.fromEntity(user);
   }
 }

@@ -7,6 +7,7 @@ const router = Router();
 
 router.post('/users', UserController.create);
 router.get('/users', UserController.list);
+router.get('/users/edit', authenticate, UserController.editUser);
 router.get('/users/:id', UserController.find);
 router.patch('/users', authenticate, UserController.update);
 
