@@ -7,7 +7,7 @@ import { Role } from '../utils/roles.js';
 
 const router = Router();
 
-router.get('/restaurants/:id/opening-hours', OpeningHourController.list);
+router.get('/restaurants/:restId/opening-hours', OpeningHourController.list);
 
 router.post(
   '/restaurant/opening-hours',
