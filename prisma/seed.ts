@@ -18,6 +18,8 @@ async function seedTags() {
       { name: 'Pub temático', type: TagType.LOCAL },
       { name: 'Café colonial', type: TagType.LOCAL },
       { name: 'Hambúrguer', type: TagType.CATEGORIA },
+      { name: 'Sanduíche', type: TagType.CATEGORIA },
+      { name: 'Saudável', type: TagType.CATEGORIA },
       { name: 'Rodízio', type: TagType.CATEGORIA },
       { name: 'Buffet Livre', type: TagType.CATEGORIA },
       { name: 'Massas', type: TagType.CATEGORIA },
@@ -168,7 +170,9 @@ async function seedUsers() {
   return prisma.user.findMany({ select: { id: true } });
 }
 
-async function seedRestaurants(tags: { id: string; type: TagType }[]) {
+async function seedRestaurants(
+  tags: { id: string; name: string; type: TagType }[],
+) {
   const makeHours = () => ({
     createMany: {
       data: [
@@ -201,6 +205,9 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.038390655384863,
       longitude: -51.18821504472203,
       description: 'Autêntica pizzaria italiana com forno a lenha.',
+      tags: tags.filter((t) =>
+        ['Pizza', 'Restaurante', 'Família', 'Janta', 'Almoço'].includes(t.name),
+      ),
       dishes: [
         {
           name: 'Pizza Margherita',
@@ -244,6 +251,16 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.020163952610563,
       longitude: -51.202484304272005,
       description: 'Hambúrguer artesanal com carne angus e pão brioche.',
+      tags: tags.filter((t) =>
+        [
+          'Hambúrguer',
+          'Restaurante',
+          'Amigos',
+          'Família',
+          'Janta',
+          'Date',
+        ].includes(t.name),
+      ),
       dishes: [
         {
           name: 'Le Grand Angus',
@@ -279,6 +296,17 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.031380551062014,
       longitude: -51.211654773584264,
       description: 'Restaurante vegetariano com pratos criativos.',
+      tags: tags.filter((t) =>
+        [
+          'Vegetariano',
+          'Saudável',
+          'Restaurante',
+          'Amigos',
+          'Família',
+          'Almoço',
+          'Lanche',
+        ].includes(t.name),
+      ),
       dishes: [
         {
           name: 'Estrogonofe de Grão-de-Bico',
@@ -314,6 +342,9 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.029031211895866,
       longitude: -51.18181966009222,
       description: 'Sushi bar moderno com rodízio e opções à la carte.',
+      tags: tags.filter((t) =>
+        ['Japones', 'Rodízio', 'Restaurante', 'Janta', 'Date'].includes(t.name),
+      ),
       dishes: [
         {
           name: 'Combinado Takêdo (30 peças)',
@@ -349,6 +380,16 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
       latitude: -30.0405049355526,
       longitude: -51.192216017763535,
       description: 'Churrasco tradicional com variedade de cortes premium.',
+      tags: tags.filter((t) =>
+        [
+          'Churrasco',
+          'Rodízio',
+          'Restaurante',
+          'Almoço',
+          'Família',
+          'Amigos',
+        ].includes(t.name),
+      ),
       dishes: [
         {
           name: 'Picanha na Brasa',
@@ -369,17 +410,152 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
         },
       ],
     },
+    {
+      profilePhoto:
+        'https://media.istockphoto.com/id/458546943/pt/foto/close-up-de-basquetebol-mcdonalds-outdoor-contra-o-c%C3%A9u-azul.jpg?s=612x612&w=0&k=20&c=8TpFIf9coKN5uQ_yHnel4noEG3xZiR4l9t6xQpWL5IQ=',
+      bannerphoto:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcsNJgHNDqkf35tg5B-fOBsl18fLRwzmhSrg&s',
+      name: 'Mc Donalds',
+      address: '3895 Stevens Creek Blvd, Santa Clara, CA 95051, United States',
+      cnpj: '000000000006',
+      email: 'mcdonalds@bite.io',
+      phone: '5132076773',
+      average_price: 50,
+      latitude: 37.323708,
+      longitude: -121.9690399,
+      description: 'Mc Donalds from Santa Clara city.',
+      tags: tags.filter((t) =>
+        [
+          'Hambúrguer',
+          'Restaurante',
+          'Amigos',
+          'Família',
+          'Café',
+          'Janta',
+          'Lanche',
+          'Almoço',
+        ].includes(t.name),
+      ),
+      dishes: [
+        {
+          name: 'Big Mac',
+          dish_price: new Prisma.Decimal(20.0),
+          dish_photo:
+            'https://api-middleware-mcd.mcdonaldscupones.com/media/image/product$kzXCTbnv/200/200/original?country=br',
+          main_dish: true,
+          description:
+            'Dois hambúrgueres, alface, queijo, molho especial, cebola, picles em um pão com gergelim.',
+        },
+        {
+          name: 'Mc Lanche Feliz',
+          dish_price: new Prisma.Decimal(25.0),
+          dish_photo:
+            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpzEDfj5MdaJ8UPen-PGJr897nPfG1K-1QxA&s',
+          main_dish: false,
+          description:
+            'Hambúrguer, batata-frita, Danoninho e suco natural. Esolha seu brinquedo!',
+        },
+      ],
+    },
+    {
+      profilePhoto:
+        'https://dynl.mktgcdn.com/p/g56WqN2fCQULR397Cm0ssv5rWQtopQPUmxTQNviRknI/450x450.jpg',
+      bannerphoto:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcsNJgHNDqkf35tg5B-fOBsl18fLRwzmhSrg&s',
+      name: 'Five Guys',
+      address: '3555 Stevens Creek Blvd, Santa Clara, CA 95051, United States',
+      cnpj: '000000000006',
+      email: 'five.guys@bite.io',
+      phone: '5132076787',
+      average_price: 50,
+      latitude: 37.323702,
+      longitude: -121.9690395,
+      description: 'Five guys from Santa Clara city.',
+      tags: tags.filter((t) =>
+        [
+          'Hambúrguer',
+          'Restaurante',
+          'Amigos',
+          'Família',
+          'Janta',
+          'Lanche',
+          'Almoço',
+        ].includes(t.name),
+      ),
+      dishes: [
+        {
+          name: 'Bacon Cheeseburger',
+          dish_price: new Prisma.Decimal(24.9),
+          dish_photo:
+            'https://tb-static.uber.com/prod/image-proc/processed_images/4cab48192e564746535574989e0d8c71/66345bbe137cfe4e15769c434c6c397c.jpeg',
+          main_dish: true,
+          description:
+            'Fresh patties hot off the grill with American-style cheese and crispy apple-wood smoked bacon. Placed on a soft, toasted sesame seed bun. Choose as many toppings as you want.',
+        },
+        {
+          name: 'Cheese Dog',
+          dish_price: new Prisma.Decimal(28.9),
+          dish_photo:
+            'https://media.timeout.com/images/105276299/750/562/image.jpg',
+          main_dish: false,
+          description:
+            'All-beef hot dog, split and grilled lengthwise for a caramelized exterior with a layer of American-style cheese on top and any of your favorite toppings.',
+        },
+      ],
+    },
+    {
+      profilePhoto:
+        'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/06/c8/71/72/subway.jpg?w=900&h=500&s=1',
+      bannerphoto:
+        'https://s3-media0.fl.yelpcdn.com/bphoto/1ffrIuas_Ko2KBago71cWA/348s.jpg',
+      name: 'Subway Santa Clara',
+      address: '2068 El Camino Real, Santa Clara, CA 95050, United States',
+      cnpj: '000000000007',
+      email: 'subway.1@bite.io',
+      phone: '5132076781',
+      average_price: 29.99,
+      latitude: 37.323512,
+      longitude: -121.9690195,
+      description: 'Subway, the best sandwiches in Santa Clara city.',
+      tags: tags.filter((t) =>
+        [
+          'Sanduíche',
+          'Saudável',
+          'Vegetariano',
+          'Restaurante',
+          'Amigos',
+          'Família',
+          'Janta',
+          'Lanche',
+          'Almoço',
+        ].includes(t.name),
+      ),
+      dishes: [
+        {
+          name: 'Frango Defumado com Cream Cheese',
+          dish_price: new Prisma.Decimal(19.0),
+          dish_photo:
+            'https://sbw-cms.zamp.com.br/foto_mobile_sanduiches_frango_defumado_com_cream_cheese_9ec86261b4/foto_mobile_sanduiches_frango_defumado_com_cream_cheese_9ec86261b4.jpg',
+          main_dish: true,
+          description:
+            'Monte o seu saboroso sanduíche com pão, vegetais, queijos e molhos à sua escolha, tudo acompanhado pelo irresistível Frango Defumado com Cream Cheese.',
+        },
+        {
+          name: 'BMT Italiano',
+          dish_price: new Prisma.Decimal(17.9),
+          dish_photo:
+            'https://sbw-cms.zamp.com.br/foto_desktop_sanduiches_embutidos_bmt_italiano_a0cef6fafc/foto_desktop_sanduiches_embutidos_bmt_italiano_a0cef6fafc.jpg',
+          main_dish: false,
+          description:
+            'Escolha o pão, os vegetais, o queijo e os molhos que mais gosta para combinar com a explosão de sabor do trio clássico: pepperoni, presunto e salame, em um sanduíche irresistível.',
+        },
+      ],
+    },
   ];
 
   for (let i = 0; i < restaurantData.length; i++) {
     const r = restaurantData[i];
     const restId = `rest-${i + 1}`;
-    const subset = tags
-      .filter((t) =>
-        [TagType.LOCAL, TagType.OCASIAO, TagType.CATEGORIA].includes(t.type),
-      )
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 2);
 
     await prisma.restaurant.upsert({
       where: { email: r.email },
@@ -399,7 +575,7 @@ async function seedRestaurants(tags: { id: string; type: TagType }[]) {
         longitude: r.longitude,
         openingHours: makeHours(),
         tags: {
-          create: subset.map((t) => ({ tagId: t.id })),
+          create: r.tags.map((t) => ({ tagId: t.id })),
         },
         restaurantDishes: {
           create: r.dishes,
@@ -422,7 +598,7 @@ async function seedUserPreferences(
   const prefs: { user_id: string; tag_id: string; weight: number }[] = [];
 
   for (const u of users) {
-    const chosen = categoryTags.sort(() => 0.5 - Math.random()).slice(0, 2);
+    const chosen = categoryTags.sort(() => 0.5 - Math.random()).slice(0, 5);
     for (const tagId of chosen) {
       prefs.push({ user_id: u.id, tag_id: tagId, weight: 1 });
     }
