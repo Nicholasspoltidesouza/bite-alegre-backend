@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { Prisma } from '@prisma/client';
-import type { Express } from 'express-serve-static-core';
+//import type { Express } from 'express-serve-static-core';
 
 import {
   RestaurantDishDto,
@@ -10,13 +10,14 @@ import {
   UpdateDishDto,
 } from '../dtos/dish-dto.js';
 import { RestaurantDishRepository } from '../repositories/dish-repository.js';
-import { getLocalFileUrl, uploadMediaToS3 } from '../utils/file-upload.js';
+//import { getLocalFileUrl, uploadMediaToS3 } from '../utils/file-upload.js';
 
 export class DishService {
   static async addDishes(
     restaurantId: string,
     dishes: RestaurantDishesDto,
-    menuMedias: Express.Multer.File[],
+    //menuMedias: Express.Multer.File[],
+    menuMedias: string[],
   ): Promise<RestaurantDishOutputDto[]> {
     const allCreated: RestaurantDishOutputDto[] = [];
 
@@ -55,14 +56,14 @@ export class DishService {
     const id = randomUUID();
 
     let dish_photo: string;
-
-    if (process.env.USE_AWS_S3 === 'true') {
-      // Modo produção - AWS S3
-      dish_photo = await uploadMediaToS3(media);
-    } else {
-      // Modo local - para testes
-      dish_photo = getLocalFileUrl(media);
-    }
+    dish_photo = media;
+    // if (process.env.USE_AWS_S3 === 'true') {
+    //   // Modo produção - AWS S3
+    //   dish_photo = await uploadMediaToS3(media);
+    // } else {
+    //   // Modo local - para testes
+    //   dish_photo = getLocalFileUrl(media);
+    // }
 
     const rows = [
       {
@@ -85,7 +86,8 @@ export class DishService {
   static async syncDishes(
     restaurantId: string,
     updatedDishes: UpdateDishDto[],
-    menuMedias: Express.Multer.File[],
+    //menuMedias: Express.Multer.File[],
+    menuMedias: string[],
   ): Promise<RestaurantDishOutputDto[]> {
     const existing =
       await RestaurantDishRepository.listByRestaurant(restaurantId);
@@ -112,10 +114,10 @@ export class DishService {
 
       if (dish.photo && menuMedias.length > mediaIndex) {
         const media = menuMedias[mediaIndex++];
-        dish_photo =
-          process.env.USE_AWS_S3 === 'true'
-            ? await uploadMediaToS3(media)
-            : getLocalFileUrl(media);
+        dish_photo = media;
+        // process.env.USE_AWS_S3 === 'true'
+        //   ? await uploadMediaToS3(media)
+        //   : getLocalFileUrl(media);
       }
 
       if (dish.id && existingIds.includes(dish.id)) {

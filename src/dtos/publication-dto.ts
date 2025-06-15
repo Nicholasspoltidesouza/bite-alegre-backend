@@ -1,8 +1,9 @@
 import { Publication } from '@prisma/client';
-import type { Express } from 'express-serve-static-core';
+//import type { Express } from 'express-serve-static-core';
 
 export interface publicationRequestDto {
-  media: Express.Multer.File;
+  //media: Express.Multer.File;
+  media: string;
   description: string;
   restaurant_id: string;
 }

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
-import type { Express } from 'express-serve-static-core';
+//import type { Express } from 'express-serve-static-core';
 
-import { RestaurantDishDto, RestaurantDishesDto } from '../dtos/dish-dto.js';
+import {
+  /*RestaurantDishDto,*/ RestaurantDishesDto,
+} from '../dtos/dish-dto.js';
 import { RestaurantFilterDto } from '../dtos/restaurant-dto.js';
 import { AuthenticatedRequest } from '../middlewares/authenticate.js';
 import { RestaurantService } from '../services/restaurant-service.js';
@@ -27,12 +29,16 @@ export class RestaurantController {
       } = req.body;
 
       let menuItems: RestaurantDishesDto | undefined = undefined;
+      let menuMedias: string[] | undefined = undefined;
 
       if (req.body.menuItems && req.body.menuItems !== 'undefined') {
         menuItems = JSON.parse(req.body.menuItems);
       }
+      if (req.body.menuMedias && req.body.menuMedias !== 'undefined') {
+        menuMedias = JSON.parse(req.body.menuMedias);
+      }
 
-      const menuMedias = req.files as Express.Multer.File[];
+      //const menuMedias = req.files as Express.Multer.File[];
 
       const restaurant = await RestaurantService.createRestaurant({
         profilePhoto,
@@ -74,14 +80,18 @@ export class RestaurantController {
     } = req.body;
 
     try {
-      let menuItems: RestaurantDishDto[] | undefined = undefined;
+      let menuItems: RestaurantDishesDto | undefined = undefined;
+      let menuMedias: string[] | undefined = undefined;
 
       if (req.body.menuItems && req.body.menuItems !== 'undefined') {
         menuItems = JSON.parse(req.body.menuItems);
       }
+      if (req.body.menuMedias && req.body.menuMedias !== 'undefined') {
+        menuMedias = JSON.parse(req.body.menuMedias);
+      }
 
-      const files = req.files as { [field: string]: Express.Multer.File[] };
-      const menuMedias = files?.menuMedias ?? [];
+      //const files = req.files as { [field: string]: Express.Multer.File[] };
+      //const menuMedias = files?.menuMedias ?? [];
 
       const updatedRestaurant = await RestaurantService.updateRestaurant({
         restaurantId,
