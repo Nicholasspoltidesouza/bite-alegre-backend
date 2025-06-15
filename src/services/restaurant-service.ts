@@ -26,7 +26,6 @@ export class RestaurantService {
       tagIds,
       openingPeriods,
       menuItems,
-      menuMedias,
     } = input;
 
     if (!name || !cnpj || !address || !email || !password) {
@@ -57,11 +56,7 @@ export class RestaurantService {
     });
 
     if (menuItems && menuItems.length) {
-      await DishService.addDishes(
-        restaurantEntity.id,
-        menuItems,
-        menuMedias ?? [],
-      );
+      await DishService.addDishes(restaurantEntity.id, menuItems);
     }
 
     if (openingPeriods && openingPeriods.length) {
