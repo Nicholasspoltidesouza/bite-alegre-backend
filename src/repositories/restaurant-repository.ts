@@ -281,7 +281,6 @@ export class RestaurantRepository {
       },
       include: {
         tags: true,
-        review: true,
         openingHours: true,
       },
     });
@@ -291,6 +290,7 @@ export class RestaurantRepository {
     restaurantId: string,
     tagIds: string[],
   ): Promise<void> {
+    console.log(tagIds);
     await prisma.restaurantTag.deleteMany({
       where: {
         restaurantId,

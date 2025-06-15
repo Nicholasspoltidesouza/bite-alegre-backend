@@ -96,13 +96,23 @@ export class DishService {
     let mediaIndex = 0;
 
     for (const dish of updatedDishes) {
+      if (
+        !dish?.name ||
+        !dish?.description ||
+        !dish?.dish_price ||
+        !dish?.media
+      ) {
+        console.warn('Prato inválido detectado, ignorando:', dish);
+        continue;
+      }
+
       if (dish.description.length > 25) {
         throw new Error(`Description too long: ${dish.description}`);
       }
 
       let dish_photo: string | undefined;
 
-      if (dish.photo && menuMedias.length > mediaIndex) {
+      if (dish.media && menuMedias.length > mediaIndex) {
         const media = menuMedias[mediaIndex++];
         dish_photo = media;
         // process.env.USE_AWS_S3 === 'true'
@@ -126,10 +136,7 @@ export class DishService {
             dish_photo || existing.find((d) => d.id === dish.id)?.dish_photo!,
         });
       } else {
-        const newDish = await this.addDish(restaurantId, {
-          ...dish,
-          media: menuMedias[mediaIndex++],
-        });
+        const newDish = await this.addDish(restaurantId, dish);
         created.push(...newDish);
       }
     }

@@ -2,7 +2,7 @@ import { Router } from 'express';
 
 import { RestaurantController } from '../controllers/restaurant-controller.js';
 import { authenticate } from '../middlewares/authenticate.js';
-import { upload, uploadRestaurantUpdate } from '../middlewares/upload.js';
+import { upload } from '../middlewares/upload.js';
 
 const router = Router();
 
@@ -12,12 +12,7 @@ router.get(
   RestaurantController.randomDraw,
 );
 
-router.patch(
-  '/restaurants',
-  authenticate,
-  uploadRestaurantUpdate,
-  RestaurantController.edit,
-);
+router.patch('/restaurants', authenticate, RestaurantController.edit);
 
 router.post(
   '/restaurants',

@@ -77,14 +77,28 @@ export class RestaurantController {
       let menuMedias: string[] | undefined = undefined;
 
       if (req.body.menuItems && req.body.menuItems !== 'undefined') {
-        menuItems = JSON.parse(req.body.menuItems);
-      }
-      if (req.body.menuMedias && req.body.menuMedias !== 'undefined') {
-        menuMedias = JSON.parse(req.body.menuMedias);
+        try {
+          menuItems =
+            typeof req.body.menuItems === 'string'
+              ? JSON.parse(req.body.menuItems)
+              : req.body.menuItems;
+        } catch (err) {
+          console.error('Erro ao fazer parse de menuItems:', err);
+          res.status(400).json({ error: 'menuItems inválido' });
+        }
       }
 
-      //const files = req.files as { [field: string]: Express.Multer.File[] };
-      //const menuMedias = files?.menuMedias ?? [];
+      if (req.body.menuMedias && req.body.menuMedias !== 'undefined') {
+        try {
+          menuMedias =
+            typeof req.body.menuMedias === 'string'
+              ? JSON.parse(req.body.menuMedias)
+              : req.body.menuMedias;
+        } catch (err) {
+          console.error('Erro ao fazer parse de menuMedias:', err);
+          res.status(400).json({ error: 'menuMedias inválido' });
+        }
+      }
 
       const updatedRestaurant = await RestaurantService.updateRestaurant({
         restaurantId,
@@ -198,7 +212,6 @@ export class RestaurantController {
 
   static async getTags(req: Request, res: Response) {
     const { sub: restaurantId } = (req as AuthenticatedRequest).user;
-
     try {
       const tags = await RestaurantTagService.getByRestaurantId(restaurantId);
 
