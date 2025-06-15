@@ -1,10 +1,11 @@
 import { RestaurantDish } from '@prisma/client';
-import type { Express } from 'express-serve-static-core';
+//import type { Express } from 'express-serve-static-core';
 
 export interface RestaurantDishDto {
   name: string;
   dish_price: number;
-  media?: Express.Multer.File;
+  //media?: Express.Multer.File;
+  media?: string;
   main_dish?: boolean;
   description: string;
 }

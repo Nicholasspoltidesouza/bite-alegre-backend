@@ -5,7 +5,7 @@ import {
   Publication,
   RestaurantDish,
 } from '@prisma/client';
-import type { Express } from 'express-serve-static-core';
+//import type { Express } from 'express-serve-static-core';
 
 import { RestaurantDishesDto, RestaurantDishesOutputDto } from './dish-dto.js';
 import { OpeningPeriodDto, OpeningPeriodsDto } from './opening-hour-dto.js';
@@ -29,7 +29,8 @@ export interface CreateRestaurantDto {
   longitude?: number;
   openingPeriods?: OpeningPeriodsDto;
   menuItems?: RestaurantDishesDto;
-  menuMedias?: Express.Multer.File[];
+  //menuMedias?: Express.Multer.File[];
+  menuMedias?: string[];
 }
 
 export type UpdateOpeningPeriodsDto = {
@@ -50,7 +51,8 @@ export type UpdateRestaurantDto = {
   tags?: string[];
   openingPeriods?: UpdateOpeningPeriodsDto;
   menuItems?: RestaurantDishesDto;
-  menuMedias?: Express.Multer.File[];
+  //menuMedias?: Express.Multer.File[];
+  menuMedias?: string[];
 };
 
 export interface RestaurantFilterDto {

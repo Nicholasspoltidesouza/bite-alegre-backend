@@ -12,7 +12,7 @@ import {
 import { PublicationRepository } from '../repositories/publication-repository.js';
 import { RestaurantRepository } from '../repositories/restaurant-repository.js';
 import { UserRepository } from '../repositories/user-repository.js';
-import { uploadMediaToS3, getLocalFileUrl } from '../utils/file-upload.js';
+//import { uploadMediaToS3, getLocalFileUrl } from '../utils/file-upload.js';
 
 export class PublicationService {
   static async create(
@@ -41,15 +41,15 @@ export class PublicationService {
       throw new Error('Usuário não encontrado!');
     }
 
-    let url: string;
+    let url = media;
 
-    if (process.env.USE_AWS_S3 === 'true') {
-      // Modo produção - AWS S3
-      url = await uploadMediaToS3(media);
-    } else {
-      // Modo local - para testes
-      url = getLocalFileUrl(media);
-    }
+    // if (process.env.USE_AWS_S3 === 'true') {
+    //   // Modo produção - AWS S3
+    //   url = await uploadMediaToS3(media);
+    // } else {
+    //   // Modo local - para testes
+    //   url = getLocalFileUrl(media);
+    // }
 
     const publicationEntity = await PublicationRepository.create(
       {
