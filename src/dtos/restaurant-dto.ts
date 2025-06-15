@@ -30,7 +30,6 @@ export interface CreateRestaurantDto {
   openingPeriods?: OpeningPeriodsDto;
   menuItems?: RestaurantDishesDto;
   //menuMedias?: Express.Multer.File[];
-  menuMedias?: string[];
 }
 
 export type UpdateOpeningPeriodsDto = {

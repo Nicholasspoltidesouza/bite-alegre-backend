@@ -29,16 +29,10 @@ export class RestaurantController {
       } = req.body;
 
       let menuItems: RestaurantDishesDto | undefined = undefined;
-      let menuMedias: string[] | undefined = undefined;
 
       if (req.body.menuItems && req.body.menuItems !== 'undefined') {
-        menuItems = JSON.parse(req.body.menuItems);
+        menuItems = req.body.menuItems;
       }
-      if (req.body.menuMedias && req.body.menuMedias !== 'undefined') {
-        menuMedias = JSON.parse(req.body.menuMedias);
-      }
-
-      //const menuMedias = req.files as Express.Multer.File[];
 
       const restaurant = await RestaurantService.createRestaurant({
         profilePhoto,
@@ -54,7 +48,6 @@ export class RestaurantController {
         tagIds,
         openingPeriods,
         menuItems,
-        menuMedias,
       });
 
       res.status(201).json(restaurant);

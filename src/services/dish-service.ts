@@ -10,24 +10,14 @@ import {
   UpdateDishDto,
 } from '../dtos/dish-dto.js';
 import { RestaurantDishRepository } from '../repositories/dish-repository.js';
-//import { getLocalFileUrl, uploadMediaToS3 } from '../utils/file-upload.js';
+// import { getLocalFileUrl, uploadMediaToS3 } from '../utils/file-upload.js';
 
 export class DishService {
   static async addDishes(
     restaurantId: string,
     dishes: RestaurantDishesDto,
-    //menuMedias: Express.Multer.File[],
-    menuMedias: string[],
   ): Promise<RestaurantDishOutputDto[]> {
     const allCreated: RestaurantDishOutputDto[] = [];
-
-    if (dishes.length !== menuMedias.length) {
-      throw new Error('O número de mídias deve ser igual ao número de pratos.');
-    }
-
-    for (let i = 0; i < dishes.length; i++) {
-      dishes[i].media = menuMedias[i];
-    }
 
     for (const dish of dishes) {
       const created = await this.addDish(restaurantId, dish);
