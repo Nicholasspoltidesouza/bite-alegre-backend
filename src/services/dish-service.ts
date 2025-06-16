@@ -106,7 +106,7 @@ export class DishService {
         continue;
       }
 
-      if (dish.description.length > 25) {
+      if (dish.description.length > 150) {
         throw new Error(`Description too long: ${dish.description}`);
       }
 
