@@ -28,22 +28,32 @@ export interface UpdateDishDto {
   dish_price: number;
   description: string;
   main_dish?: boolean;
-  photo?: string;
+  media?: string;
 }
 
 export class RestaurantDishesOutputDto {
   id: string;
-  dish_photo: string;
+  name: string;
+  dish_price: number;
+  description: string;
+  main_dish?: boolean;
+  media?: string;
 
   constructor(data: RestaurantDishesOutputDto) {
     this.id = data.id;
-    this.dish_photo = data.dish_photo;
+    this.name = data.name;
+    this.dish_price = data.dish_price;
+    this.description = data.description;
+    this.media = data.media;
   }
 
   static fromEntity(entity: RestaurantDish): RestaurantDishesOutputDto {
     return new RestaurantDishesOutputDto({
       id: entity.id,
-      dish_photo: entity.dish_photo,
+      name: entity.name,
+      dish_price: entity.dish_price.toNumber(),
+      description: entity.description,
+      media: entity.dish_photo,
     });
   }
 
